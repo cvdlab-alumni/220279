@@ -45,3 +45,16 @@ DRAW(d2);
 /* aumento dimensioni ancora */
 var d3 = DOMAIN([[1.5,5.5],[1,3],[0,1]])([4,2,1]);
 DRAW(d3);
+
+/* mappa ritorna nuovo dominio MAP(funzione mapping)(dominio da mappare) 
+la funzione ha signature function(p) dove p e' un array a m dimensioni rappresentatnte un punto */
+
+var dominio = DOMAIN([[0,1]])([10]);
+/* p e' un array di m coordinate */
+var mapping = function(p) {
+	var u = p[0];
+
+	return [u,1];
+};
+/* mappa ritorna nuovo dominio MAP(funzione mapping)(dominio da mappare) */
+var mapped = MAP(mapping)(dominio);
