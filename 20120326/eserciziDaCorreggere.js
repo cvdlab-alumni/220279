@@ -45,4 +45,5 @@ var drawCircle = function(r,n) {
 	};
 
 	var mappedCircle = MAP(mappingCircle)(dominioCircle);
+	DRAW(mappedCircle);
 };
