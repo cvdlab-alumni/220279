@@ -10,3 +10,13 @@ var mapped = MAP(mapping)(dominio);
 
 /*****/
 
+var dominioBisettrice = DOMAIN([[0,10]])([100]);
+
+var mappingBisettrice = function(p) {
+	var u = p[0];
+
+	return [u,u];
+};
+
+var mappedBisettrice = MAP(mappingBisettrice)(dominioBisettrice);
+
