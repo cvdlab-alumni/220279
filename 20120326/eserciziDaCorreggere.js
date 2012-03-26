@@ -20,3 +20,15 @@ var mappingBisettrice = function(p) {
 
 var mappedBisettrice = MAP(mappingBisettrice)(dominioBisettrice);
 
+/****/
+
+var dominioSin = DOMAIN([[0,100]])([1000]);
+
+var mappingSin = function(p) {
+	var u = p[0];
+
+	return [u,Math.sin(u)];
+};
+
+var mappedSin = MAP(mappingSin)(dominioSin);
+DRAW(mappedSin);
