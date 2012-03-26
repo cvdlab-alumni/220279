@@ -22,12 +22,12 @@ var mappedBisettrice = MAP(mappingBisettrice)(dominioBisettrice);
 
 /****/
 
-var dominioSin = DOMAIN([[0,100]])([1000]);
+var dominioSin = DOMAIN([[0,100*PI]])([1000]);
 
 var mappingSin = function(p) {
 	var u = p[0];
 
-	return [u,Math.sin(u)];
+	return [u,SIN(u)];
 };
 
 var mappedSin = MAP(mappingSin)(dominioSin);
