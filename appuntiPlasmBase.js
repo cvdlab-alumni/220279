@@ -33,11 +33,15 @@ COLOR([R,G,B]])(modello)
 	ritorna una funzione che accetta in input una lista contenente un numero che rappresenta in quanti intervalli lo voglio dividere
 */
 
-var d = DOMAIN([[1,5]])([4]);
+var d1 = DOMAIN([[1,5]])([4]);
 
 /* disegna d */
 
-DRAW(d);
+DRAW(d1);
 
 /* aumento le dimensione i nuovi argomenti sono le nuove dimensioni */
-var d = DOMAIN([[1.5,5.5],[1,3]])([4,2]);
+var d2 = DOMAIN([[1.5,5.5],[1,3]])([4,2]);
+DRAW(d2);
+/* aumento dimensioni ancora */
+var d3 = DOMAIN([[1.5,5.5],[1,3],[0,1]])([4,2,1]);
+DRAW(d3);
