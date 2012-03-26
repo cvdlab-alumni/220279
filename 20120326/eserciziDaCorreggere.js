@@ -63,3 +63,24 @@ var drawCilinder = function(r,h,n,m,color) {
 	DRAW(mappedCircle);
 	COLOR(color)(mappedCircle);
 };
+
+/****/
+// dominio bidimensionale
+// x,y,z,raggio
+// x = raggio * cos(alfa) * cos(beta)
+// y = raggio * cos(alfa) * sin(beta)
+// z = raggio * sin(alfa)
+// raggio
+var drawSphere = function(r,n,color) {
+	var dominioCircle = DOMAIN([[0,2*PI],[0,PI]])([n,n]);
+
+	var mappingCircle = function(p) {
+		var u = p[0]-PI/2;
+		var v = p[1];
+		return [ r * SIN(v) * SIN(u), r * SIN(v) * COS(u) , r * COS(v)];
+	};
+
+	var mappedCircle = MAP(mappingCircle)(dominioCircle);
+	DRAW(mappedCircle);
+	// COLOR(color)(mappedCircle);
+};
