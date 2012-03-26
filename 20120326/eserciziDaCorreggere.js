@@ -84,3 +84,33 @@ var drawSphere = function(r,n,color) {
 	DRAW(mappedCircle);
 	// COLOR(color)(mappedCircle);
 };
+
+/*
+	se l'altezza del punto generico x,y,z e' r sin(alfa) dove alfa e' l'angolo tra il raggio e il piano
+	quando il cos(alfa) ovvero la proiezione del punto e' = 0 mi trovo sull'asse z, quando e' = 1 sulla circofenrenza massima
+	assumo che cos(alfa) sia il fattore di scala delle varie circonferenze concentriche che definiscono la sfera guardandola da sopra
+	assunto cio' le coordinate restanti x e y sono le classiche cordinate di una crf con l'alnglo tra la proiezione e l'asse
+	quizi
+	z = r * sin(alfa)
+	y = r * cos(alfa) * sin(beta)
+	x = r * cos(alfa) * cos(beta)
+
+	alfa variera' tra -pi/2 e pi/2 che per limiti di plasm verra' definito come 0,pi a cui sottrarre pi/2
+	beta e' tra 0,2pi
+
+	definita cosi' pero' chiudo il piano dal lato non illuminato per evitare questo effetto moltiplico la z per -1
+	(inverto la normale?)
+*/
+var drawSphereNew = function(r,n,color) {
+	var dominioCircle = DOMAIN([[0,PI],[0,2*PI]])([n,2*n]);
+
+	var mappingCircle = function(p) {
+		var u = p[0] - PI/2; // alfa
+		var v = p[1]; // beta
+		return [ r * COS(u) * COS(v), r * COS(u) * SIN(v), r * SIN(u) * -1];
+	};
+
+	var mappedCircle = MAP(mappingCircle)(dominioCircle);
+	DRAW(mappedCircle);
+	// COLOR(color)(mappedCircle);
+};
