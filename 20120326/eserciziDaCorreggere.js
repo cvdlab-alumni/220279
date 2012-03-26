@@ -72,10 +72,10 @@ var drawCilinder = function(r,h,n,m,color) {
 // z = raggio * sin(alfa)
 // raggio
 var drawSphere = function(r,n,color) {
-	var dominioCircle = DOMAIN([[0,2*PI],[0,PI]])([n,n]);
+	var dominioCircle = DOMAIN([[0,2*PI],[0,PI]])([n,2*n]);
 
 	var mappingCircle = function(p) {
-		var u = p[0]-PI/2;
+		var u = p[0];
 		var v = p[1];
 		return [ r * SIN(v) * SIN(u), r * SIN(v) * COS(u) , r * COS(v)];
 	};
