@@ -57,3 +57,23 @@ var cantilever2 = T([0])([3*14.7])(cantilever);
 
 
 var building = STRUCT([steelFrames, floors, cantilever1, cantilever2]);
+
+// Costruiamo il pannello interno (3 griglie di simplessi)
+var grid1 = SIMPLEX_GRID([[-0.15, 0.05, -2.3, 0.05, -0.15], [7.5]])
+var grid2 = SIMPLEX_GRID([[-0.15, -0.05, 2.3, -0.05, ]])
+var grid3 = SIMPLEX_GRID([[]])
+
+// le finestre
+var panel = SIMPLEX_GRID([])
+
+var grid = COLOR([0.2,0.2,0.2])(STRUCT([grid1,grid2,grid3]));
+
+// Funzione che colora le finestre e li mergia ad una grid
+var frame = function(color) {
+	return STRUCT([COLOR(color)(panel), grid]);
+}
+
+// Replica gruppi con panello
+var frameGroup = function(number, color){
+	return STRUCT(REPLICA(number)([frame(color), T([0])([2.4])]));
+}
