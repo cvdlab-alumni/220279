@@ -27,7 +27,7 @@ var floors = SIMPLEX_GRID([
 	[-1.2, 0.3, -2.7, 0.3, -2.7, 0.3]
 ]);
 
-var building = STRUCT([steelFrames, floors]);
+// var building = STRUCT([steelFrames, floors]);
 
 // Struttura a sbalzo
 // piano
@@ -50,3 +50,10 @@ var cantivelerBeams = SIMPLEX_GRID([
 ]);
 
 var cantilever = STRUCT([cantivelerFloors,cantivelerPillars,cantivelerBeams]);
+// Ribalto e diventa nero (a causa dello scambio interno dei simplessi)
+var cantilever1 = S([0])([-1])(cantilever);
+// Traslo
+var cantilever2 = T([0])([3*14.7])(cantilever);
+
+
+var building = STRUCT([steelFrames, floors, cantilever1, cantilever2]);
