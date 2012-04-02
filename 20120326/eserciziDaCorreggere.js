@@ -114,3 +114,26 @@ var drawSphereNew = function(r,n,color) {
 	DRAW(mappedCircle);
 	// COLOR(color)(mappedCircle);
 };
+
+
+var drawCono = function(r,h,n,m,color) {
+	r = r || 1;
+	h = h || 1;
+	n = n || 36;
+	m = m || 36*2;
+	color = color || [1,0,0];
+
+	var dominioCircle = DOMAIN([[0,2*PI],[0,h]])([n,m]);
+
+	var mappingCircle = function(p) {
+		var u = p[0];
+		var v = p[1];
+		return [r * COS(u), r * SIN(u), v];
+	};
+
+	var mappedCircle = MAP(mappingCircle)(dominioCircle);
+	DRAW(mappedCircle);
+	COLOR(color)(mappedCircle);
+	
+	return mappedCircle;
+};
