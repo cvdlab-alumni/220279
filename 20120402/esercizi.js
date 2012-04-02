@@ -28,3 +28,25 @@ var floors = SIMPLEX_GRID([
 ]);
 
 var building = STRUCT([steelFrames, floors]);
+
+// Struttura a sbalzo
+// piano
+var cantivelerFloors = SIMPLEX_GRID([
+	[0.15, 2*2.4, 0.15],
+	[-0.15, 14.4, -0.15],
+	[-1.2, 0.3, -2.7, 0.3, -2.7, 0.3]
+]);
+// pilastro
+var cantivelerPillars = SIMPLEX_GRID([
+	[0.15],
+	[0.15,-14.4,0.15],
+	[1.5,3,3]
+]);
+// travi
+var cantivelerBeams = SIMPLEX_GRID([
+	[0.15],
+	[14.7],
+	[-7.5,1.5]
+]);
+
+var cantilever = STRUCT([cantivelerFloors,cantivelerPillars,cantivelerBeams]);
