@@ -1,0 +1,83 @@
+/* estilos de social sidebar - version para resolucion angosta! - vienen de #socialsidebar y el DOM */
+
+#socialsidebar {
+	display: none;
+	}
+
+
+div#ad_like_star {
+	background-color: #f1f1fc;
+	overflow: hidden;
+	width: 120px;
+	margin-bottom: 15px;
+	float: left;
+	margin-right: 10px;
+	}
+	
+.ad_s_like {
+	height: 50px;
+	width: 120px;
+	display: inline-block;
+	background-image: url(http://cdn.archdaily.net/wp-content/themes/archdaily/images/bookmarkicon-narrow3.png);
+	text-indent: -9999px;
+	background-repeat: no-repeat;
+	background-position: top center;
+	}
+	
+#socialsidebar ul li a.ADlike-favorite, #socialsidebar-narrow ul li a.ADlike-favorite {
+	background-position: top center;
+	}
+
+
+#socialsidebar-narrow {
+	display: auto;
+	background:none repeat scroll 0 0 white;
+	position:relative;
+	width:auto;
+	text-align: center;
+	margin: 0 auto 15px;
+	width: 100%;
+	}
+	
+#socialsidebar-narrow img{
+	border: 0 none;
+    margin-right: 5px;
+    vertical-align: middle;
+	}
+	
+#socialsidebar-narrow ul {
+	list-style-type: none;
+	overflow: hidden;
+	margin: 0px;
+	padding: 14px 0px;
+	background-color: #F1F1FC;
+	padding-left: 15px;
+	display: block;
+	height: 22px;
+	}
+	
+#socialsidebar-narrow ul li {
+	float: left;
+	text-align: center;
+	margin: 0 2px;
+	overflow: hidden;
+	position: relative;
+	top: 5px;
+	}
+
+.narrowsocial-facebook {
+	padding-top: 8px;
+	}
+	
+.narrowsocial-tweetmeme {
+	padding-top: 10px;
+	}
+	
+.narrowsocial-stumbleupon {
+	padding-top: 9px;
+	}
+	
+.narrowsocial-mail {
+	padding-top: 4px;
+	}
+
