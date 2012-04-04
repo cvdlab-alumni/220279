@@ -77,5 +77,12 @@ finalStruct.push( POLYLINE([[30,14-ssMuro],[40,14-ssMuro]]) );
 // Muri extra promontorio nord
 finalStruct.push( POLYLINE([[1,17+ssMuro],[7,17+ssMuro],[7,17]]) );
 finalStruct.push( POLYLINE([[8,17],[8,17+ssMuro],[9,17+ssMuro]]) );
+finalStruct.push( POLYLINE([[5,21],[6,21],[6,21-(ssMuro/2)],[5,21-(ssMuro/2)]]) );
+finalStruct.push( POLYLINE([[7-0.5,21],[9,21],[9,21-(ssMuro/2)],[7-0.3,21-(ssMuro/2)],[7-0.3,21]]) );
+finalStruct.push( POLYLINE([[5,20+0.1],[5-(ssMuro/2),20+0.1],[5-(ssMuro/2),22]]) );
+finalStruct.push( POLYLINE([[5-(ssMuro/2),17],[5-(ssMuro/2),19+0.1],[5,19+0.1]]) );
+
+// Panca
+
 
 DRAW(STRUCT(finalStruct));
