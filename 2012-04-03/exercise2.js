@@ -5,6 +5,7 @@ var ssMuroLisci = 0.1;
 var gradiniCount = 6;
 var gradLargo = 3/gradiniCount;
 var gradSS = altezzaBase/gradiniCount;
+var tettoSpesso = 0.51;
 
 var baseStruttura = [];
 baseStruttura.push( SIMPLEX_GRID([[1],[2],[altezzaBase]]) ); // 2 blocchi prima piscina
@@ -62,9 +63,14 @@ panca = STRUCT(panca);
 
 var murettiNord = [];
 murettiNord.push( SIMPLEX_GRID([[-5,ssMuroLisci],[-17,2],[-altezzaBase,altezzaMuri]]) );
-murettiNord.push( SIMPLEX_GRID([[-5,ssMuroLisci],[-(20), 2],[-altezzaBase,altezzaMuri]]) );
-
+murettiNord.push( SIMPLEX_GRID([[-5,ssMuroLisci],[-(20), 2-ssMuro],[-altezzaBase,altezzaMuri]]) );
+murettiNord.push( SIMPLEX_GRID([[-5,1],[-(21), ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
+murettiNord.push( SIMPLEX_GRID([[-7,2],[-(21), ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
 murettiNord = STRUCT(murettiNord);
 
-DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord]));
+var tettoNord = [];
+tettoNord.push( SIMPLEX_GRID([[-0.8, 0.2+8+0.8],[-(13+0.2),0.8+8+0.8],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
+tettoNord = STRUCT(tettoNord);
+
+DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord]));
 
