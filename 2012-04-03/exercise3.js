@@ -41,7 +41,7 @@ muriStrutturaGrossi.push( SIMPLEX_GRID([[-(38+1-ssMuro), 12+ssMuro],[-(16), ssMu
 muriStrutturaGrossi = COLOR([222/255,184/255,135/255])(STRUCT(muriStrutturaGrossi));
 
 
-var fondoPiscina = []
+var fondoPiscina = [];
 fondoPiscina.push( SIMPLEX_GRID([[-1,21],[-1,9],[altezzaBase/2]]) ); // settore fondo piscina grossa
 fondoPiscina.push( SIMPLEX_GRID([[-47,4],[-5,11],[altezzaBase/2]]) ); // settore fondo piscina piccola
 fondoPiscina = COLOR([245/255,245/255,220/255])(STRUCT(fondoPiscina));
@@ -74,7 +74,7 @@ murettiNord = COLOR([222/255,184/255,135/255])(STRUCT(murettiNord));
 
 var tettoNord = [];
 tettoNord.push( SIMPLEX_GRID([[-0.5, 0.5+8+0.8],[-(13+0.2),0.8+8+0.8],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
-tettoNord = COLOR([255/255,255/255,255/255])(STRUCT(tettoNord));
+tettoNord = COLOR([250/255,250/255,210/255])(STRUCT(tettoNord));
 
 var colonneEst = [];
 // Sotto
@@ -91,7 +91,7 @@ colonneEst = COLOR([222/255,184/255,135/255])(STRUCT(colonneEst));
 
 var tettoDestro = [];
 tettoDestro.push( SIMPLEX_GRID([[-24,23],[-4,13],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
-tettoDestro = COLOR([255/255,255/255,255/255])(STRUCT(tettoDestro));
+tettoDestro = COLOR([250/255,250/255,210/255])(STRUCT(tettoDestro));
 
 var vetrate = []; // ssVetrate
 // vetrata sud
@@ -107,7 +107,7 @@ vetrate = COLOR([100/255,149/255,237/255])(STRUCT(vetrate));
 
 var acquaPiscine = [];
 acquaPiscine.push( SIMPLEX_GRID([[-1,21],[-1,9],[-(altezzaBase/2), 0.1]]) ); // acqua piscina piccola
-fondoPiscina.push( SIMPLEX_GRID([[-47,4],[-5,11],[-(altezzaBase/2), 0.1]]) ); // acqua piscina piccola
+acquaPiscine.push( SIMPLEX_GRID([[-47,4],[-5,11],[-(altezzaBase/2), 0.1]]) ); // acqua piscina piccola
 acquaPiscine = COLOR([0/255,255/255,255/255])(STRUCT(acquaPiscine));
 
 DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord,colonneEst,tettoDestro,vetrate,acquaPiscine]));
