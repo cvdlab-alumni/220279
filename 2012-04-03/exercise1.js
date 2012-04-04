@@ -37,8 +37,8 @@ var ssMuro = 0.2;
 var finalStruct = []
 finalStruct.push( drawGrid(0,39,0,1) ); // riga sotto
 finalStruct.push( drawGrid(0,1,0,2) ); // riga verticale vicino piscina grossa
-finalStruct.push( drawGrid(20,36,1,17) ); // tra piscina e gradini
-finalStruct.push( drawGrid(1,20,10,17) ); // tra piscina e promontorio nord
+finalStruct.push( drawGrid(21,36,1,17) ); // tra piscina e gradini
+finalStruct.push( drawGrid(1,21,10,17) ); // tra piscina e promontorio nord
 finalStruct.push( drawGrid(1,9,17,22) ); // promontorio nord
 finalStruct.push( drawGrid(36,39,4,17) ); // sopra gradino, prima promontorio west
 finalStruct.push( drawGrid(39,47,4,16) ); // promontorio west
@@ -49,11 +49,11 @@ finalStruct.push( POLYLINE([[8,1],[1,1],[1,1-ssMuro],[8,1-ssMuro]]) ); // muro s
 finalStruct.push( POLYLINE([[1,1-ssMuro],[1-ssMuro,1-ssMuro],[1-ssMuro,22+ssMuro],[1,22+ssMuro],[1,1-ssMuro]]) ); // muro lato piscina est fino a promontorio
 finalStruct.push( POLYLINE([[1-ssMuro,22+ssMuro],[9+ssMuro,22+ssMuro],[9+ssMuro,22],[1-ssMuro,22]]) ); // muro nord promontorio nord
 finalStruct.push( POLYLINE([[9+ssMuro,22+ssMuro],[9+ssMuro,17-ssMuro],[9,17-ssMuro],[9,22+ssMuro]]) ); // muro west promontorio nord
-finalStruct.push( POLYLINE([[8-0.5,15],[25+0.5,15],[25+0.5,15+ssMuro],[8-0.5,15+ssMuro],[8-0.5,15]]) ); // muro nel nulla sopra la piscina
-finalStruct.push( POLYLINE([[25-0.8,7+ssMuro],[32+0.8,7+ssMuro],[32+0.8,7+ssMuro+ssMuro],[25-0.8,7+ssMuro+ssMuro],[25-0.8,7+ssMuro]]) ); // muro nel nulla a destra la piscina
-finalStruct.push( POLYLINE([[37-0.8,11+0.5],[41+0.5,11+0.5], [41+0.5,11+0.5+ssMuro], [37-0.8,11+0.5+ssMuro], [37-0.8,11+0.5]]) ); // muro nel nulla a sinistra della piscinetta
+finalStruct.push( POLYLINE([[8-0.5,15],[26+0.5,15],[26+0.5,15+ssMuro],[8-0.5,15+ssMuro],[8-0.5,15]]) ); // muro nel nulla sopra la piscina
+finalStruct.push( POLYLINE([[26-0.8,7+ssMuro],[33+0.8,7+ssMuro],[33+0.8,7+ssMuro+ssMuro],[26-0.8,7+ssMuro+ssMuro],[26-0.8,7+ssMuro]]) ); // muro nel nulla a destra la piscina
+finalStruct.push( POLYLINE([[38-0.8,11+0.5],[42+0.5,11+0.5], [42+0.5,11+0.5+ssMuro], [38-0.8,11+0.5+ssMuro], [38-0.8,11+0.5]]) ); // muro nel nulla a sinistra della piscinetta
+finalStruct.push( POLYLINE([[42-0.5,5],[51,5],[51,5-ssMuro],[42-0.5,5-ssMuro],[42-0.5,5]]) ); // muro sud della piscinetta
 
-// finalStruct.push( POLYLINE([[]]) ); // muro nel nulla a sinistra della piscinetta
-
+// finalStruct.push( POLYLINE([[42-0.5,5],[51,5],[51,5-ssMuro],[42-0.5,5-ssMuro],[42-0.5,5]]) ); // muro sud della piscinetta
 
 DRAW(STRUCT(finalStruct));
