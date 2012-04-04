@@ -119,5 +119,6 @@ acquaPiscine.push( SIMPLEX_GRID([[-47,4],[-5,11],[-(altezzaBase/2), 0.1]]) ); //
 acquaPiscine = COLOR([0/255,255/255,255/255])(STRUCT(acquaPiscine));
 
 var muoviSedia = T([0,1,2])([1,12,altezzaBase])( R(2)(PI+(PI/2))(mioModello()));
+var muoviSediaDue = T([0,1,2])([27,7,altezzaBase])( R(2)(PI)(mioModello()));
 
-DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord,colonneEst,tettoDestro,vetrate,acquaPiscine,muoviSedia]));
+DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord,colonneEst,tettoDestro,vetrate,acquaPiscine,muoviSedia,muoviSediaDue]));
