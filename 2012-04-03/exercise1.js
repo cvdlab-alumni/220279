@@ -83,6 +83,6 @@ finalStruct.push( POLYLINE([[5,20+0.1],[5-(ssMuro/2),20+0.1],[5-(ssMuro/2),22]])
 finalStruct.push( POLYLINE([[5-(ssMuro/2),17],[5-(ssMuro/2),19+0.1],[5,19+0.1]]) );
 
 // Panca
-
+finalStruct.push( POLYLINE([[8-0.1,14+0.1],[23+0.1,14+0.1],[23+0.1,14+0.1+0.5],[8-0.1,14+0.1+0.5],[8-0.1,14+0.1] ] ));
 
 DRAW(STRUCT(finalStruct));
