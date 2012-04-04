@@ -2,6 +2,9 @@ var altezzaBase = 1.72;
 var altezzaMuri = 4;
 var ssMuro = 0.2;
 var ssMuroLisci = 0.1;
+var gradiniCount = 6;
+var gradLargo = 3/gradiniCount;
+var gradSS = altezzaBase/gradiniCount;
 
 var baseStruttura = [];
 baseStruttura.push( SIMPLEX_GRID([[1],[2],[altezzaBase]]) ); // 2 blocchi prima piscina
@@ -40,9 +43,15 @@ fondoPiscina.push( SIMPLEX_GRID([[-1,21],[-1,10],[altezzaBase/2]]) ); // settore
 fondoPiscina.push( SIMPLEX_GRID([[-47,4],[-5,11],[altezzaBase/2]]) ); // settore fondo piscina piccola
 fondoPiscina = STRUCT(fondoPiscina);
 
-// var gradini = [];
-// gradini.push()
-// gradini = STRUCT(gradini)
+var gradini = [];
+gradini.push( SIMPLEX_GRID([[-37, gradLargo],[-1,3],[altezzaBase]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*1), gradLargo],[-1,3],[altezzaBase-(gradSS*1)]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*2), gradLargo],[-1,3],[altezzaBase-(gradSS*2)]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*3), gradLargo],[-1,3],[altezzaBase-(gradSS*3)]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*4), gradLargo],[-1,3],[altezzaBase-(gradSS*4)]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*5), gradLargo],[-1,3],[altezzaBase-(gradSS*5)]]) );
+gradini.push( SIMPLEX_GRID([[-(37+gradLargo*6), gradLargo],[-1,3],[altezzaBase-(gradSS*6)]]) );
+gradini = STRUCT(gradini)
 
-DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina]));
+DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini]));
 
