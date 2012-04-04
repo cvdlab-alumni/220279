@@ -30,8 +30,8 @@ muriStrutturaGrossi.push( SIMPLEX_GRID([[-(25+ssMuro), 7 + (3-ssMuro)],[-(7+ssMu
 muriStrutturaGrossi.push( SIMPLEX_GRID([[-(37+ssMuro), 4 + (1-ssMuro)+0.5],[-(11+ssMuro), ssMuro],[-altezzaBase,altezzaMuri]]) );
 // Piscina piccola
 muriStrutturaGrossi.push( SIMPLEX_GRID([[-41.5, 0.5+9+ssMuro],[-(5-ssMuro), ssMuro],[-altezzaBase,altezzaMuri]]) );
-
-
+muriStrutturaGrossi.push( SIMPLEX_GRID([[-51, ssMuro],[-(5-ssMuro), 11+(2*ssMuro)],[altezzaBase+altezzaMuri]]) );
+muriStrutturaGrossi.push( SIMPLEX_GRID([[-(38+1-ssMuro), 12+ssMuro],[-(16), ssMuro],[altezzaBase+altezzaMuri]]) );
 
 muriStrutturaGrossi = STRUCT(muriStrutturaGrossi);
 
