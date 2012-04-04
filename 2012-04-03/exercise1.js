@@ -69,8 +69,8 @@ finalStruct.push( POLYLINE([[36+(grSpesso*7),1],[36+(grSpesso*7),4]]));
 finalStruct.push( POLYLINE([[36+(grSpesso*8),1],[36+(grSpesso*8),4]]));
 
 // Muri extra vicino piscinetta
-finalStruct.push( POLYLINE([[39-0.2,5],[39-0.2,11+0.5]]) );
-finalStruct.push( POLYLINE([[43-0.5,5],[43-0.5,11+0.5]]) );
+// finalStruct.push( POLYLINE([[39-0.2,5],[39-0.2,11+0.5]]) );
+// finalStruct.push( POLYLINE([[43-0.5,5],[43-0.5,11+0.5]]) );
 finalStruct.push( POLYLINE([[45-0.2,7-ssMuro],[45-0.2,14+ssMuro]]) );
 finalStruct.push( POLYLINE([[30,14-ssMuro],[40,14-ssMuro]]) );
 
