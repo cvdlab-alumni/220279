@@ -2,10 +2,12 @@ var altezzaBase = 1.72;
 var altezzaMuri = 4;
 var ssMuro = 0.2;
 var ssMuroLisci = 0.1;
+var ssVetrate = 0.05;
 var gradiniCount = 6;
 var gradLargo = 3/gradiniCount;
 var gradSS = altezzaBase/gradiniCount;
 var tettoSpesso = 0.51;
+var lColonna = 0.10;
 
 var baseStruttura = [];
 baseStruttura.push( SIMPLEX_GRID([[1],[2],[altezzaBase]]) ); // 2 blocchi prima piscina
@@ -13,7 +15,7 @@ baseStruttura.push( SIMPLEX_GRID([[-1,21],[1,-9,7],[altezzaBase]]) ); // settore
 baseStruttura.push( T([0])([22])(SIMPLEX_GRID([[15],[17],[altezzaBase]])) ); // corpo tra piscina e scalini
 baseStruttura.push( T([0])([37])(SIMPLEX_GRID([[3],[1],[altezzaBase]])) ); // prot scalini
 baseStruttura.push( T([0,1])([37,4])(SIMPLEX_GRID([[3],[13],[altezzaBase]])) ); // corpo scalini e nord
-baseStruttura.push( T([0,1])([40,4])(SIMPLEX_GRID([[8],[12],[altezzaBase]])) ); // corpo tra prima e pool dopo
+baseStruttura.push( T([0,1])([40,4])(SIMPLEX_GRID([[7],[12],[altezzaBase]])) ); // corpo tra prima e pool dopo
 baseStruttura.push( T([0,1])([47,4])(SIMPLEX_GRID([[5],[1],[altezzaBase]])) ); // protuberanza piscina nord
 baseStruttura.push( T([0,1])([51,5])(SIMPLEX_GRID([[1],[1],[altezzaBase]])) ); // protuberanza piscina nord alto
 baseStruttura.push( T([0,1])([1,17])(SIMPLEX_GRID([[8],[5],[altezzaBase]])) ); // promontorio nord
@@ -66,11 +68,41 @@ murettiNord.push( SIMPLEX_GRID([[-5,ssMuroLisci],[-17,2],[-altezzaBase,altezzaMu
 murettiNord.push( SIMPLEX_GRID([[-5,ssMuroLisci],[-(20), 2-ssMuro],[-altezzaBase,altezzaMuri]]) );
 murettiNord.push( SIMPLEX_GRID([[-5,1],[-(21), ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
 murettiNord.push( SIMPLEX_GRID([[-7,2],[-(21), ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
+murettiNord.push( SIMPLEX_GRID([[-1,5],[-17, ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
+murettiNord.push( SIMPLEX_GRID([[-7,2],[-17, ssMuroLisci],[-altezzaBase,altezzaMuri]]) );
 murettiNord = STRUCT(murettiNord);
 
 var tettoNord = [];
-tettoNord.push( SIMPLEX_GRID([[-0.8, 0.2+8+0.8],[-(13+0.2),0.8+8+0.8],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
+tettoNord.push( SIMPLEX_GRID([[-0.5, 0.5+8+0.8],[-(13+0.2),0.8+8+0.8],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
 tettoNord = STRUCT(tettoNord);
 
-DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord]));
+var colonneEst = [];
+// Sotto
+colonneEst.push( SIMPLEX_GRID([[-(25+(1-lColonna)), lColonna],[-(6+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(31+(1-lColonna)), lColonna],[-(6+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(37+(1-lColonna)), lColonna],[-(6+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(43+(1-lColonna)), lColonna],[-(6+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+// Sopra
+colonneEst.push( SIMPLEX_GRID([[-(25+(1-lColonna)), lColonna],[-(13+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(31+(1-lColonna)), lColonna],[-(13+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(37+(1-lColonna)), lColonna],[-(13+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst.push( SIMPLEX_GRID([[-(43+(1-lColonna)), lColonna],[-(13+(1-lColonna)), lColonna],[-altezzaBase, altezzaMuri]]) );
+colonneEst = STRUCT(colonneEst);
 
+var tettoDestro = [];
+tettoDestro.push( SIMPLEX_GRID([[-24,23],[-4,13],[-(altezzaBase+altezzaMuri), tettoSpesso]]) );
+tettoDestro = STRUCT(tettoDestro);
+
+var vetrate = []; // ssVetrate
+// vetrata sud
+vetrate.push( SIMPLEX_GRID([[-30,11],[-5, ssVetrate],[-altezzaBase, altezzaMuri]]) );
+// vetrata su piscinetta
+vetrate.push( SIMPLEX_GRID([[-44,ssVetrate],[-7, 7],[-altezzaBase, altezzaMuri]]) );
+// vetrate doppie
+vetrate.push( SIMPLEX_GRID([[-31,ssVetrate],[-(7+(2*ssMuro)), 6],[-altezzaBase, altezzaMuri]]) );
+vetrate.push( SIMPLEX_GRID([[-32,ssVetrate],[-(7+(2*ssMuro)), 6],[-altezzaBase, altezzaMuri]]) );
+// vetrate ortogonale su doppie
+vetrate.push( SIMPLEX_GRID([[-30,10],[-(7+6+(2*ssMuro)), ssVetrate],[-altezzaBase, altezzaMuri]]) );
+vetrate = STRUCT(vetrate);
+
+DRAW(STRUCT([baseStruttura,muriStrutturaGrossi,fondoPiscina,gradini,panca,murettiNord,tettoNord,colonneEst,tettoDestro,vetrate]));
