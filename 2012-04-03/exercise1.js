@@ -46,6 +46,7 @@ finalStruct.push( drawGrid(39,47,4,16) ); // promontorio west
 finalStruct.push( drawGrid(47,52,4,5) ); // passerella west piscina
 finalStruct.push( drawGrid(51,52,5,6) ); // passerella west piscina-1
 
+// Muri spessi
 finalStruct.push( POLYLINE([[8,1],[1,1],[1,1-ssMuro],[8,1-ssMuro]]) ); // muro sotto piscina est
 finalStruct.push( POLYLINE([[1,1-ssMuro],[1-ssMuro,1-ssMuro],[1-ssMuro,22+ssMuro],[1,22+ssMuro],[1,1-ssMuro]]) ); // muro lato piscina est fino a promontorio
 finalStruct.push( POLYLINE([[1-ssMuro,22+ssMuro],[9+ssMuro,22+ssMuro],[9+ssMuro,22],[1-ssMuro,22]]) ); // muro nord promontorio nord
@@ -56,5 +57,25 @@ finalStruct.push( POLYLINE([[38-0.8,11+0.5],[42+0.5,11+0.5], [42+0.5,11+0.5+ssMu
 finalStruct.push( POLYLINE([[42-0.5,5],[51,5],[51,5-ssMuro],[42-0.5,5-ssMuro],[42-0.5,5]]) ); // muro sud della piscinetta
 finalStruct.push( POLYLINE([[51,5-ssMuro],[51,16+ssMuro],[51+ssMuro,16+ssMuro],[51+ssMuro,5-ssMuro],[51,5-ssMuro]]) ); // muro ovest della piscinetta
 finalStruct.push( POLYLINE([[51,16],[51,16+ssMuro],[38-0.2,16+ssMuro],[38-0.2,16],[51,16]]) ); // muro nord della piscinetta
+
+// Gradini
+finalStruct.push( POLYLINE([[36+(grSpesso*1),1],[36+(grSpesso*1),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*2),1],[36+(grSpesso*2),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*3),1],[36+(grSpesso*3),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*4),1],[36+(grSpesso*4),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*5),1],[36+(grSpesso*5),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*6),1],[36+(grSpesso*6),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*7),1],[36+(grSpesso*7),4]]));
+finalStruct.push( POLYLINE([[36+(grSpesso*8),1],[36+(grSpesso*8),4]]));
+
+// Muri extra vicino piscinetta
+finalStruct.push( POLYLINE([[39-0.2,5],[39-0.2,11+0.5]]) );
+finalStruct.push( POLYLINE([[43-0.5,5],[43-0.5,11+0.5]]) );
+finalStruct.push( POLYLINE([[45-0.2,7-ssMuro],[45-0.2,14+ssMuro]]) );
+finalStruct.push( POLYLINE([[30,14-ssMuro],[40,14-ssMuro]]) );
+
+// Muri extra promontorio nord
+finalStruct.push( POLYLINE([[1,17+ssMuro],[7,17+ssMuro],[7,17]]) );
+finalStruct.push( POLYLINE([[8,17],[8,17+ssMuro],[9,17+ssMuro]]) );
 
 DRAW(STRUCT(finalStruct));
