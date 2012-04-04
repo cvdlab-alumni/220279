@@ -42,7 +42,7 @@ muriStrutturaGrossi = STRUCT(muriStrutturaGrossi);
 
 
 var fondoPiscina = []
-fondoPiscina.push( SIMPLEX_GRID([[-1,21],[-1,10],[altezzaBase/2]]) ); // settore fondo piscina grossa
+fondoPiscina.push( SIMPLEX_GRID([[-1,21],[-1,9],[altezzaBase/2]]) ); // settore fondo piscina grossa
 fondoPiscina.push( SIMPLEX_GRID([[-47,4],[-5,11],[altezzaBase/2]]) ); // settore fondo piscina piccola
 fondoPiscina = STRUCT(fondoPiscina);
 
