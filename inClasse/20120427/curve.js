@@ -68,3 +68,14 @@ var curve = MAP(curveMapping)(domain);
 DRAW(COLOR([0,1,1])(curve));
 // poligono dei punti di cntrollo
 DRAW(POLYLINE(controlpoints));
+
+// ESERCIZIO 4z
+// Quintica
+var domain = INTERVALS(1)(50);
+// Grado punti - 1 (solo punti no t)
+var controlpoints = [[0,0,1],[1,2,2],[3,2,3],[3,0,4],[5,-1,5],[6,1,6]];
+var curveMapping = BEZIER(S0)(controlpoints);
+var curve = MAP(curveMapping)(domain);
+DRAW(COLOR([0,1,1])(curve));
+// poligono dei punti di cntrollo
+DRAW(POLYLINE(controlpoints));
