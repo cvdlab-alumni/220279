@@ -14,6 +14,8 @@ POLYLINE([[8,1],[8,3]]),
 POLYLINE([[9,0],[9,3]]),
 ]);
 
+// qui puoi scalare e traslare
+
 var down = STRUCT([
 POLYLINE([[0,7],[9,7]]),
 POLYLINE([[1,6],[4,6]]),
@@ -37,6 +39,15 @@ var lab = STRUCT([lab3dUp,lab3dDown]);
 
 // Tetto con cuboid
 var tetto = COLOR([1,0,0,0.5])(T([2])([3])(BOUNDARY(CUBOID([9,7,0.5]))));
-
 var lab = STRUCT([lab,tetto]);
-DRAW(lab);
+
+
+//
+// CURVE
+//
+
+var domain = INTERVALS(1)(50);
+var controlpoints = [[1,0],[1,1],[2,1],[2,2]];
+var curveMapping = CUBIC_HERMITE(S0)(controlpoints);
+var curve = MAP(curveMapping)(domain);
+DRAW(curve);
