@@ -79,3 +79,13 @@ var curve = MAP(curveMapping)(domain);
 DRAW(COLOR([0,1,1])(curve));
 // poligono dei punti di cntrollo
 DRAW(POLYLINE(controlpoints));
+
+// ESERCIZIO 5
+// Spline è curva a tratti (POLYLINE = spline di grado 1)
+// Spline cardinale cubica: spline interpolatrice (che interpola con qualsiasi insieme di punti finito) 
+// (complesso cubiche hermit attaccate tra loro con continuità geometrica e di derivata prima ovvero:
+//  TRATTO i-esimo di curva: ci(u) = U3 * Bh * [p(i) p(i+1) h(p(i+1)-p(i-1)) h(p(i+2) - p(i)) ])
+// Dati (p0...pm) m+1 punti costrisco una spline cardinale cubica. per ogni (m-2) segmenti impongo 4 vincoli
+// la curva interpolera' tutti i punti tra p(0+1) e p(m-1)
+// la tangente in un punto e' parallela al vettore differenza tra il suo predecesssore e successore
+// tra due punti viene generata una hermitiana
