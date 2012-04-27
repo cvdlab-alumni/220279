@@ -46,8 +46,25 @@ var lab = STRUCT([lab,tetto]);
 // CURVE
 //
 
+// ESERCIZIO 3
+// interval in N pezzi
 var domain = INTERVALS(1)(50);
-var controlpoints = [[1,0],[1,1],[2,1],[2,2]];
+// punti controllo (p0, p1, t0, t1)
+var controlpoints = [[1,0],[1,1],[1,0],[1,1]];
+// S0 x curve (prende la prima coordinate di ogni punto), punticontrollo, torna una funzione di mapping
 var curveMapping = CUBIC_HERMITE(S0)(controlpoints);
+// mappa curva su dominio
 var curve = MAP(curveMapping)(domain);
+// disegna
 DRAW(curve);
+
+// ESERCIZIO 4
+// Quintica
+var domain = INTERVALS(1)(50);
+// Grado punti - 1 (solo punti no t)
+var controlpoints = [[0,0],[1,2],[3,2],[3,0],[5,-1],[6,1]];
+var curveMapping = BEZIER(S0)(controlpoints);
+var curve = MAP(curveMapping)(domain);
+DRAW(COLOR([0,1,1])(curve));
+// poligono dei punti di cntrollo
+DRAW(POLYLINE(controlpoints));
