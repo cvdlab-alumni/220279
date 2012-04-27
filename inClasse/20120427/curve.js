@@ -98,11 +98,10 @@ DRAW(POLYLINE(controlpoints));
 // d'interpolazione funziona uguale
 // la tangente in un punto e' parallela al vettore differenza tra il suo predecesssore e successore
 // tra due punti viene generata una hermitiana
+// CUBIC_CARDINAL(domain, h)
 
-
-
-var domain = INTERVALS(1)(20);
+var domain = INTERVALS(1)(50);
 var controlpoints = [[0,0],[0,0],[3,2],[4,-1],[7,3],[9,0],[11,1],[12,0],[12,0]];
 // Spline unisce i pezzi di curva
-var splineCardinal = SPLINE(CUBIC_CARDINAL(domain))(controlpoints);
+var splineCardinal = SPLINE(CUBIC_CARDINAL(domain,3))(controlpoints);
 DRAW(splineCardinal);
