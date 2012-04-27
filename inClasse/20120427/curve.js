@@ -30,6 +30,13 @@ POLYLINE([[8,4],[8,6]]),
 POLYLINE([[9,4],[9,7]]),
 ]);
 
-var labPiano = STRUCT([up,down]);
 
-var lab3d = COLOR([0.2,0.1,0.2,0.3])(EXTRUDE([3])(labPiano));
+var lab3dUp = COLOR([0.2,0.1,0.2,1])(EXTRUDE([3])(up));
+var lab3dDown = COLOR([0.2,0.1,0.2,1])(EXTRUDE([3])(down));
+var lab = STRUCT([lab3dUp,lab3dDown]);
+
+// Tetto con cuboid
+var tetto = COLOR([1,0,0,0.5])(T([2])([3])(BOUNDARY(CUBOID([9,7,0.5]))));
+
+var lab = STRUCT([lab,tetto]);
+DRAW(lab);
