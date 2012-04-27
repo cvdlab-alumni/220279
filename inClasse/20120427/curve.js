@@ -94,5 +94,15 @@ DRAW(POLYLINE(controlpoints));
 //
 // Dati (p0...pm) m+1 punti costrisco una spline cardinale cubica. per ogni (m-2) segmenti impongo 4 vincoli
 // la curva interpolera' tutti i punti tra p(0+1) e p(m-1)
+// per interpolare i punti iniziali li raddoppio (2 volte sullo stesso posto) cosi' l'algoritmo 
+// d'interpolazione funziona uguale
 // la tangente in un punto e' parallela al vettore differenza tra il suo predecesssore e successore
 // tra due punti viene generata una hermitiana
+
+
+
+var domain = INTERVALS(1)(20);
+var controlpoints = [[0,0],[0,0],[3,2],[4,-1],[7,3],[9,0],[11,1],[12,0],[12,0]];
+// Spline unisce i pezzi di curva
+var splineCardinal = SPLINE(CUBIC_CARDINAL(domain))(controlpoints);
+DRAW(splineCardinal);
