@@ -1,4 +1,3 @@
-// TODO
 	var drawBezierS0Curve = function(controlPoints) {
 		var domain = INTERVALS(1)(80); // In HD xD
 
@@ -17,3 +16,13 @@
 
 		return curveMapping;
 	};
+
+// DRAW(POLYLINE([[0.0],[-0.6,0]]));
+
+// Frontalino
+var controls = [[0.6, 0, 0], [0.6, -2, 0], [-0.75, -2, 0], [0, -1, 0], [-1.3, 0, 0], [-1.3, 0.6, 0], [0.6, 0.6, 0], [0.6, 0, 0]];
+
+// scaliamo i punti di 1.2 o 1.3 ed e' fatto... poi i successivi di 2 e poi di 0.9
+// aumentando le z
+
+drawBezierS0Curve(controls);
