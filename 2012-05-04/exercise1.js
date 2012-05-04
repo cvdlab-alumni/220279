@@ -103,26 +103,25 @@ var getWingModel = function() {
 	
 
 	var domain2 = DOMAIN([[0,1],[0,1]])([30,30]);
-	// var surfWing = BEZIER(S1)(wingProfile);
-	// var surfImage = MAP(surfWing)(domain2);
+	var surfWing = BEZIER(S1)(wingProfile);
+	var surfImage = MAP(surfWing)(domain2);
 
 	// Chiusura ala
-	var curvaChiusa = [[10-10,0,0],[10-10,0,1],[6-10,0,1],[6-10,0,0]];
+	var curvaChiusa = [[10-10,0,0],[10-10,0,1.1],[6-10,0,1.1],[6-10,0,0]];
 	var chiudiAla = [];
-	chiudiAla.push(drawBezierS0Curve( movexWingSection(scaleWingSection(moveWingSection(wingcontrol, lastZ), 0.5), -0.7) ));
-	chiudiAla.push(drawBezierS0Curve( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa, lastZ), 0.5), -0.7) ));
-	// chiudiAla.push(drawBezierS0Curve( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa2, lastZ), 0.5), -0.7) ));
-	var surfWing = BEZIER(S1)(chiudiAla);
-	var surfImage1 = MAP(surfWing)(domain2);
+	chiudiAla.push(drawBezierS0( movexWingSection(scaleWingSection(moveWingSection(wingcontrol, lastZ), 0.5), -0.7) ));
+	chiudiAla.push(drawBezierS0( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa, lastZ), 0.5), -0.7) ));
+	var surfchiudiAla1 = BEZIER(S1)(chiudiAla);
+	var surfImchiudiAla1 = MAP(surfchiudiAla1)(domain2);
 
-	var curvaChiusa2 = [[6-10,0,1],[9.9-10,0,0]];
+	var curvaChiusa2 = [[6-10,0,0],[9.9-10,0,0]];
 	var tappoAla = [];
-	tappoAla.push(drawBezierS0Curve( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa, lastZ), 0.5), -0.7) ));
-	tappoAla.push(drawBezierS0Curve( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa2, lastZ), 0.5), -0.7) ));	
+	tappoAla.push(drawBezierS0( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa, lastZ), 0.5), -0.7) ));
+	tappoAla.push(drawBezierS0( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa2, lastZ), 0.5), -0.7) ));	
 	var tappoWing = BEZIER(S1)(tappoAla);
-	var surfImage2 = MAP(tappoWing)(domain2);
+	var surfTappo = MAP(tappoWing)(domain2);
 
-	return STRUCT([surfImage1,surfImage2]);
+	return STRUCT([surfImage,surfImchiudiAla1,surfTappo]);
 };
 
-DRAW(COLOR([255/255,204/255,0/255])( T([2])([-10])(getWingModel()) ));
+DRAW(COLOR([255/255,204/255,0/255])( getWingModel() ));
