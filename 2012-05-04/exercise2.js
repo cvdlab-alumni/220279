@@ -67,8 +67,29 @@ var getFusModel = function() {
 	var surfFUS = BEZIER(S1)(fusProfile);
 	var FUSImage = MAP(surfFUS)(domain2);
 	
+	
+	var frontaleFusoliera = [];
+	frontaleFusoliera.push(drawBezierS0Curve(controls));
+	frontaleFusoliera.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, -0.4), 0.6), 0) ));
+	var surfFrontale = BEZIER(S1)(frontaleFusoliera);
+	var surfFrontaleImm = MAP(surfFrontale)(domain2);	
+	
+	
+	var curvaChiusa = [[0.6, 0, 0]];
+	var chiusuraFus = [];
+	chiusuraFus.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, -0.4), 0.6), 0) ));
+	chiusuraFus.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(curvaChiusa, -0.4), 0.6), 0) ));
+	var surfFrontaleChiusura = BEZIER(S1)(chiusuraFus);
+	var surfFrontaleChiusuraImm = MAP(surfFrontaleChiusura)(domain2);
+	
+	var chiusuraFusDietro = [];
+	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
+	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(curvaChiusa, lastZ), 0.8), 0.3) ));
+	var surfDietroChiusura = BEZIER(S1)(chiusuraFusDietro);
+	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);		
+	
 	// return R([0,1])(PI)(FUSImage);
-	return FUSImage;
+	return STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm]);
 };
 
-DRAW(COLOR([255/255,204/255,0/255, 0.6])( getFusModel() ));
+DRAW(COLOR([255/255,204/255,0/255, 1])( getFusModel() ));
