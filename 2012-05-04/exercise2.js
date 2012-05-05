@@ -1,13 +1,14 @@
+var getFusModel = function() {
 	var drawBezierS0Curve = function(controlPoints) {
 		var domain = INTERVALS(1)(80); // In HD xD
 
 		// punti di controllo
-		var listaDfacce = [];
-		controlPoints.forEach( function(v,i) { listaDfacce.push([i]); } );
-		DRAW( COLOR([0.1,0.6,0.2])( SIMPLICIAL_COMPLEX(controlPoints)(listaDfacce) ) );
+		// var listaDfacce = [];
+		// controlPoints.forEach( function(v,i) { listaDfacce.push([i]); } );
+		// DRAW( COLOR([0.1,0.6,0.2])( SIMPLICIAL_COMPLEX(controlPoints)(listaDfacce) ) );
 
 		// polyline che unisce punti di controllo
-		DRAW( COLOR([0.5,0.2,0.7])( POLYLINE(controlPoints) ) );
+		// DRAW( COLOR([0.5,0.2,0.7])( POLYLINE(controlPoints) ) );
 
 		// curva
 		var curveMapping = BEZIER(S0)(controlPoints);
@@ -16,13 +17,58 @@
 
 		return curveMapping;
 	};
+	
+	var drawBezierS0 = function(controlPoints) {
+		return BEZIER(S0)(controlPoints);
+	};
 
-// DRAW(POLYLINE([[0.0],[-0.6,0]]));
+	var scaleFusSection = function(controlWing, scaleFactor) {
+		return controlWing.map(function(p) { return [p[0] * scaleFactor, p[1] * scaleFactor, p[2]]; } );
+	};
 
-// Frontalino
-var controls = [[0.6, 0, 0], [0.6, -2, 0], [-0.75, -2, 0], [0, -1, 0], [-1.3, 0, 0], [-1.3, 0.6, 0], [0.6, 0.6, 0], [0.6, 0, 0]];
+	var moveFusSection = function(controlWing, zeta) {
+		return controlWing.map(function(p) { return [p[0], p[1], p[2] + zeta]; } );
+	};
 
-// scaliamo i punti di 1.2 o 1.3 ed e' fatto... poi i successivi di 2 e poi di 0.9
-// aumentando le z
+	var moveyFusSection = function(controlWing, ics) {
+		return controlWing.map(function(p) { return [p[0], p[1] + ics, p[2]]; } );
+	};	
 
-drawBezierS0Curve(controls);
+	// DRAW(POLYLINE([[0.0],[-0.6,0]]));
+
+	// Frontalino
+	var controls = [[0.6, 0, 0], [0.6, -2, 0], [-0.75, -2, 0], [0, -1, 0], [-1.3, 0, 0], [-1.3, 0.6, 0], [0.6, 0.6, 0], [0.6, 0, 0]];
+	
+	var fusProfile = [];
+	var lastZ = 0;
+	// scaliamo i punti di 1.2 o 1.3 ed e' fatto... poi i successivi di 2 e poi di 0.9
+	// aumentando le z
+	fusProfile.push(drawBezierS0Curve(controls));
+	lastZ = lastZ + 0.2;
+	fusProfile.push(drawBezierS0Curve(controls));
+	lastZ = 2.45;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.45) ));
+	lastZ = lastZ + 0.2;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.45) ));
+	lastZ = lastZ + 5.3;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.45) ));
+	lastZ = lastZ + 0.2;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.45) ));	
+	lastZ = lastZ + 2.4;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.5) ));
+	lastZ = lastZ + 0.2;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 1.28), 0.5) ));
+	lastZ = 13.8;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
+	lastZ = lastZ + 0.2;
+	fusProfile.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
+
+	var domain2 = DOMAIN([[0,1],[0,1]])([30,30]);
+	var surfFUS = BEZIER(S1)(fusProfile);
+	var FUSImage = MAP(surfFUS)(domain2);
+	
+	// return R([0,1])(PI)(FUSImage);
+	return FUSImage;
+};
+
+DRAW(COLOR([255/255,204/255,0/255, 0.6])( getFusModel() ));
