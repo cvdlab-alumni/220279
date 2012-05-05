@@ -37,7 +37,7 @@ var getWingModel = function() {
 	// Lunghezza massima ala = 6
 	// in z quindi posso andare 11
 	var wingcontrol = [[10-10,0,0], [9-10,0.1,0], [7-10, 0.5, 0], [7-10,1,0], [3-10,5,0], [1-10,-4.9,0], [5-10,2,0], [7-10,-1,0], [10-10,0,0]];
-
+	var zRuote = 0;
 
 	var wingProfile = [];
 	var lastZ = 0;
@@ -63,6 +63,7 @@ var getWingModel = function() {
 	lastZ = lastZ + 0.2;
 	wingProfile.push(drawBezierS0(moveWingSection(wingcontrol, lastZ)));
 	lastZ = lastZ + 0.2;
+	zRuote = lastZ;
 	wingProfile.push(drawBezierS0(moveWingSection(wingcontrol, lastZ)));
 	// z = 2
 	// Da qui si deve rimpicciolire, visto che rimaniamo dritti dietro (semplificazione)
@@ -120,8 +121,25 @@ var getWingModel = function() {
 	tappoAla.push(drawBezierS0( movexWingSection(scaleWingSection(moveWingSection(curvaChiusa2, lastZ), 0.5), -0.7) ));	
 	var tappoWing = BEZIER(S1)(tappoAla);
 	var surfTappo = MAP(tappoWing)(domain2);
+	
+	// prova ruote
+	
+	var torusSurface = COLOR([105/255, 105/255, 105/255])( TORUS_SOLID([0.1, 0.9])([10,10,10]) );
+	var steccainRuota = CUBOID([0.1,0.1,0.8]);
+	var steccainRuota2 = T([1])([-0.8])(CUBOID([0.1,1.8,0.1]));
+	var steccainRuota3 = T([0])([-0.8])(CUBOID([1.8,0.1,0.1]));
+	var steccainRuota3 = T([0])([-0.8])(CUBOID([1.8,0.1,0.1]));
+	var steccainSu = T([1,2])([0,+0.8])(CUBOID([0.1,3,0.1]));
+	// 
+	var strutturaRuota = COLOR([85/255, 107/255, 47/255])( STRUCT([steccainRuota,steccainRuota2,steccainRuota3,steccainSu]) );
+	var ruotaSotto = T([0,1,2])([-3,-1.2,zRuote])( S([0,1,2])([0.5,0.5,0.5])( STRUCT([torusSurface,strutturaRuota]) ));
 
-	return COLOR([189/255,183/255,107/255])( STRUCT([surfImage,surfImchiudiAla1,surfTappo]) );
+	var tuttoInsieme = STRUCT([ 
+		COLOR([189/255,183/255,107/255])( STRUCT([surfImage,surfImchiudiAla1,surfTappo]) ),
+		ruotaSotto
+		]);
+		
+	return tuttoInsieme;
 };
 
 var getFusModel = function() {
