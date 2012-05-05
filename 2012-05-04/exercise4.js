@@ -290,12 +290,18 @@ var getFusModel = function() {
 
 	var elicaSolida = T([2])([-0.6])( S([0,1])([0.5,0.5])( STRUCT([elicaImmagine, R([0,1])(PI), elicaImmagine]) ) );
 	
+	// Finestra
+	var vetroFinestra = T([0,2])([-0.4,2.45])(BOUNDARY(CUBOID([0.8,1,0.1])));
+	var colFinestra = COLOR([30/255, 144/255, 254/255, 0.6])(vetroFinestra);
+	
 	var tuttoInsieme = STRUCT([
 		COLOR([255/255,204/255,0/255, 1])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,surfchiudiFusMicroImm,surfchiudiLaFusMicroImm]) ), 
 		
 		COLOR([169/255,169/255,169/255, 1])(modellinoIncastroElica),
 		
-		COLOR([5/255,5/255,5/255, 1])( elicaSolida )
+		COLOR([5/255,5/255,5/255, 1])( elicaSolida ),
+		
+		colFinestra
 		]);
 		
 	return tuttoInsieme;
