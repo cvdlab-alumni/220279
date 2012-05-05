@@ -256,6 +256,20 @@ var getFusModel = function() {
 	var surfDietroChiusura = BEZIER(S1)(chiusuraFusDietro);
 	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);
 	
+	// Tentativo chiusura micro
+	var chiudiFusMicro = [];
+	chiudiFusMicro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
+	lastZ = lastZ + 0.2;
+	chiudiFusMicro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.4), 0.3) ));
+	var surfchiudiFusMicro = BEZIER(S1)(chiudiFusMicro);
+	var surfchiudiFusMicroImm = MAP(surfchiudiFusMicro)(domain2);
+	
+	var chiudiLaFusMicro = [];
+	chiudiLaFusMicro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.4), 0.3) ));
+	chiudiLaFusMicro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(curvaChiusa, lastZ), 0.4), 0.3) ))
+	var surfchiudiLaFusMicro = BEZIER(S1)(chiudiLaFusMicro);
+	var surfchiudiLaFusMicroImm = MAP(surfchiudiLaFusMicro)(domain2);
+	
 	// Elica
 	var cpointElica = [[0,0,0],[1,1.5,0],[2,4,0],[0.5,2,0],[0,0,0]];
 	var cpointElicaChiudi = [[0,0,0]];
@@ -277,11 +291,11 @@ var getFusModel = function() {
 	var elicaSolida = T([2])([-0.6])( S([0,1])([0.5,0.5])( STRUCT([elicaImmagine, R([0,1])(PI), elicaImmagine]) ) );
 	
 	var tuttoInsieme = STRUCT([
-		COLOR([255/255,204/255,0/255])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm]) ), 
+		COLOR([255/255,204/255,0/255, 1])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,surfchiudiFusMicroImm,surfchiudiLaFusMicroImm]) ), 
 		
-		COLOR([169/255,169/255,169/255])(modellinoIncastroElica),
+		COLOR([169/255,169/255,169/255, 1])(modellinoIncastroElica),
 		
-		COLOR([5/255,5/255,5/255])( elicaSolida )
+		COLOR([5/255,5/255,5/255, 1])( elicaSolida )
 		]);
 		
 	return tuttoInsieme;
