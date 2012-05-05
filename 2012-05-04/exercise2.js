@@ -112,8 +112,33 @@ var getFusModel = function() {
 	var surfDietroChiusura = BEZIER(S1)(chiusuraFusDietro);
 	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);
 	
-	// return R([0,1])(PI)(FUSImage);
-	return STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,modellinoIncastroElica]);
+	// Elica
+	var cpointElica = [[0,0,0],[1,1.5,0],[2,4,0],[0.5,2,0],[0,0,0]];
+	var cpointElicaChiudi = [[0,0,0]];
+	
+	var listElicaSolida = [];
+	var listElicaSup1 = [];
+	var listElicaSup2 = [];
+	listElicaSup1.push(drawBezierS0Curve(cpointElica));
+	listElicaSup1.push(drawBezierS0Curve(cpointElicaChiudi));
+	listElicaSup2.push(drawBezierS0Curve(moveFusSection(cpointElica,0.02)));
+	listElicaSup2.push(drawBezierS0Curve(moveFusSection(cpointElicaChiudi,0.02)));
+	listElicaSolida.push( BEZIER(S1)(listElicaSup1) );
+	listElicaSolida.push( BEZIER(S1)(listElicaSup2) );
+	
+	var domain3 = DOMAIN([[0,1],[0,1],[0,1]])([50,1,1]);
+	var elicaBezier = BEZIER(S2)(listElicaSolida);
+	var elicaImmagine = MAP(elicaBezier)(domain3);	
+
+	var elicaSolida = T([2])([-0.6])( S([0,1])([0.5,0.5])( STRUCT([elicaImmagine, R([0,1])(PI), elicaImmagine]) ) );
+	
+	var tuttoInsieme = STRUCT([
+		COLOR([255/255,204/255,0/255, 1])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,modellinoIncastroElica]) ), 
+		
+		COLOR([5/255,5/255,5/255, 1])( elicaSolida )
+		]);
+		
+	return tuttoInsieme;
 };
 
-DRAW(COLOR([255/255,204/255,0/255, 1])( getFusModel() ));
+DRAW( getFusModel() );
