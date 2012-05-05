@@ -110,7 +110,7 @@ var getFusModel = function() {
 	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
 	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(curvaChiusa, lastZ), 0.8), 0.3) ));
 	var surfDietroChiusura = BEZIER(S1)(chiusuraFusDietro);
-	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);		
+	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);
 	
 	// return R([0,1])(PI)(FUSImage);
 	return STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,modellinoIncastroElica]);
