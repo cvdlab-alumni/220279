@@ -121,7 +121,7 @@ var getWingModel = function() {
 	var tappoWing = BEZIER(S1)(tappoAla);
 	var surfTappo = MAP(tappoWing)(domain2);
 
-	return STRUCT([surfImage,surfImchiudiAla1,surfTappo]);
+	return COLOR([255/255,204/255,0/255])( STRUCT([surfImage,surfImchiudiAla1,surfTappo]) );
 };
 
-DRAW(COLOR([255/255,204/255,0/255])( getWingModel() ));
+DRAW( getWingModel() );

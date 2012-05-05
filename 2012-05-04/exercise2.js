@@ -133,7 +133,9 @@ var getFusModel = function() {
 	var elicaSolida = T([2])([-0.6])( S([0,1])([0.5,0.5])( STRUCT([elicaImmagine, R([0,1])(PI), elicaImmagine]) ) );
 	
 	var tuttoInsieme = STRUCT([
-		COLOR([255/255,204/255,0/255, 1])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,modellinoIncastroElica]) ), 
+		COLOR([255/255,204/255,0/255, 1])( STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm]) ), 
+		
+		COLOR([169/255,169/255,169/255, 1])(modellinoIncastroElica),
 		
 		COLOR([5/255,5/255,5/255, 1])( elicaSolida )
 		]);
