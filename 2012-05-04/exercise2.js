@@ -1,6 +1,28 @@
 var getFusModel = function() {
+	var drawHalfSphere = function(r,color){
+		r = r || 1;
+		color = color || [255/255,204/255,0/255, 1];
+
+		var domain = DOMAIN([[0,PI/2],[0,2*PI]])([r*20,r*20]);
+
+		var mapping = function(p){
+			var u = p[0];
+			var v = p[1];
+
+			return [
+				r*SIN(u)*COS(v),
+				r*SIN(u)*SIN(v),
+				r*COS(u)
+			];
+		};
+
+		var mapped = MAP(mapping)(domain);
+
+		return COLOR(color)(mapped);
+	};
+	
 	var drawBezierS0Curve = function(controlPoints) {
-		var domain = INTERVALS(1)(80); // In HD xD
+		// var domain = INTERVALS(1)(80); // In HD xD
 
 		// punti di controllo
 		// var listaDfacce = [];
@@ -12,8 +34,8 @@ var getFusModel = function() {
 
 		// curva
 		var curveMapping = BEZIER(S0)(controlPoints);
-		var curve = MAP(curveMapping)(domain);
-		DRAW( COLOR([0,0.5,0.5])( curve ) );
+		// var curve = MAP(curveMapping)(domain);
+		// DRAW( COLOR([0,0.5,0.5])( curve ) );
 
 		return curveMapping;
 	};
@@ -82,6 +104,8 @@ var getFusModel = function() {
 	var surfFrontaleChiusura = BEZIER(S1)(chiusuraFus);
 	var surfFrontaleChiusuraImm = MAP(surfFrontaleChiusura)(domain2);
 	
+	var modellinoIncastroElica = T([2])([0.3])(S([0,1])([0.2,0.2])(S([2])([-1])(drawHalfSphere())));
+	
 	var chiusuraFusDietro = [];
 	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(controls, lastZ), 0.8), 0.3) ));
 	chiusuraFusDietro.push(drawBezierS0Curve( moveyFusSection(scaleFusSection(moveFusSection(curvaChiusa, lastZ), 0.8), 0.3) ));
@@ -89,7 +113,7 @@ var getFusModel = function() {
 	var surfDietroChiusuraImm = MAP(surfDietroChiusura)(domain2);		
 	
 	// return R([0,1])(PI)(FUSImage);
-	return STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm]);
+	return STRUCT([FUSImage,surfFrontaleImm,surfFrontaleChiusuraImm,surfDietroChiusuraImm,modellinoIncastroElica]);
 };
 
 DRAW(COLOR([255/255,204/255,0/255, 1])( getFusModel() ));
