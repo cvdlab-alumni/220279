@@ -91,9 +91,9 @@ var stabilizzatoriDiCodaOrizz = function () {
 };
 
 var drawTimoni = function() {
-	return STRUCT([COLOR([255/255,204/255,0/255, 1])( stabilizzatoriDiCodaVert() ),
+	return STRUCT([COLOR([255/255,204/255,0/255])( stabilizzatoriDiCodaVert() ),
 	
-	    COLOR([255/255,204/255,0/255, 1])( stabilizzatoriDiCodaOrizz()) 
+	    COLOR([189/255,183/255,107/255])( stabilizzatoriDiCodaOrizz()) 
 		]);
 };
 
