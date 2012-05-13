@@ -1,3 +1,5 @@
+var scmodel;
+
 var getPedone = function() {
 	var sphereSurface = function (r) {  
 	  var domain = DOMAIN([[0,PI], [0,2*PI]])([r*30,r*30*2]);
@@ -90,11 +92,13 @@ var getPedone = function() {
 	
 	// Colora e genera superfici
 	var structSuperfici = STRUCT(generatedSurfaces);
-	DRAW(COLMP(structSuperfici));
+	// DRAW(COLMP(structSuperfici));
 	
 	// Sfera sopra
 	var sphereTop = T([2])([6.55+0.5])(sphereSurface(1,10));
-	DRAW(COLMP(sphereTop));
+	// DRAW(COLMP(sphereTop));
+	
+	return COLMP( STRUCT([structSuperfici,sphereTop]) );
 };
 
-getPedone();
+scmodel = getPedone();
