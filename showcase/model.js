@@ -13,17 +13,6 @@ var getPedone = function() {
 	  return MAP(mapping)(domain);
 	};
 	
-	var drawHermiteS0Curve = function(controlPoints) {
-		var domain = INTERVALS(1)(80); // In HD xD
-
-		// curva
-		var curveMapping = CUBIC_HERMITE(S0)(controlPoints);
-		var curve = MAP(curveMapping)(domain);
-		DRAW( COLOR([0,0.5,0.5])( curve ) );
-
-		return curveMapping;
-	};
-	
 	var ruotaPunti = function(pointList, angolo, asse) {
 	    if (asse === 0) {
 	      var alfa = angolo;
@@ -76,14 +65,15 @@ var getPedone = function() {
 	// Marrone pastello 152,118,84
 	var COLMP = COLOR([152/255,118/255,84/255]);
 	// Risoluzione di rotazione
-	var resRot = 25;
+	var resRot = 30;
 
 	// muoviamo punti asse X
 	var puntiAsseXZ = basicControlPoints.map(function(ptlist) {return ruotaPunti(ptlist,PI/2,0);});
 	AA(HER0)(puntiAsseXZ);
 	
 	// Dominio
-	var domainSurface = DOMAIN([[0,1],[0,2*PI],[0,1]])([resRot,resRot,1]);
+	// var domainSurface = DOMAIN([[0,1],[0,2*PI],[0,1]])([resRot,resRot,1]);
+	var domainSurface = DOMAIN([[0,1],[0,2*PI]])([resRot,resRot]);
 	
 	// Generate hermits rotational surfaces
 	var generatedHermitFunctions = AA(HER0)(puntiAsseXZ);
