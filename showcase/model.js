@@ -1,6 +1,6 @@
-var scmodel;
+/* Pedone */
 
-var getPedone = function() {
+!(function (exports){
 	var sphereSurface = function (r) {  
 	  var domain = DOMAIN([[0,PI], [0,2*PI]])([r*30,r*30*2]);
 	  var mapping = function (p) {
@@ -88,7 +88,5 @@ var getPedone = function() {
 	var sphereTop = T([2])([6.55+0.5])(sphereSurface(1,10));
 	// DRAW(COLMP(sphereTop));
 	
-	return COLMP( STRUCT([structSuperfici,sphereTop]) );
-};
-
-scmodel = getPedone();
+	exports.scmodel = COLMP( STRUCT([structSuperfici,sphereTop]) );
+}(this));
