@@ -2,7 +2,7 @@
 
 !(function (exports){
 	var sphereSurface = function (r) {  
-	  var domain = DOMAIN([[0,PI], [0,2*PI]])([r*30,r*30*2]);
+	  var domain = DOMAIN([[0,PI], [0,2*PI]])([r*25,r*25*2]);
 	  var mapping = function (p) {
 		var u = p[0];
 		var v = p[1];
@@ -65,7 +65,7 @@
 	// Marrone pastello 152,118,84
 	var COLMP = COLOR([152/255,118/255,84/255]);
 	// Risoluzione di rotazione
-	var resRot = 30;
+	var resRot = 25;
 
 	// muoviamo punti asse X
 	var puntiAsseXZ = basicControlPoints.map(function(ptlist) {return ruotaPunti(ptlist,PI/2,0);});
