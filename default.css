@@ -103,7 +103,7 @@ img.fakeZoom {}
 .container {
 	font-size: 1em;
 	margin: 0 auto;
-	width: 590px;
+	width: 860px;
 }
 
 /* header */
@@ -123,7 +123,7 @@ img.fakeZoom {}
 .navigation {
 	height: 36px;
 	margin: 0 auto;
-	width: 632px;
+	width: 860px;
 }
 .navigation a {
 	background: url(img/navigation.jpg) no-repeat;
