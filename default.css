@@ -147,6 +147,11 @@ img.resizeLarge {
 	font-size: 1.4em;
 	margin-bottom: 4px;
 }
+.content h2 {
+	color: #553;
+	font-size: 1.2em;
+	margin-bottom: 4px;
+}
 
 /* footer */
 .footer {

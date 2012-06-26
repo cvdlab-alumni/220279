@@ -19,7 +19,7 @@
 <div class="navigation">
 	<a href="index.html#Introduzione">Intro</a>
 	<a href="index.html#Architettura">Description</a>
-	<a href="index.html#Design">Design</a>
+	<a href="index.html#Decomposition">Decomposition</a>
 	<a href="index.html#Considerazioni">Conclusion</a>
 	<a href="https://github.com/cvdlab-cg/220279/zipball/final-project">Download .zip</a>
 	<a href="https://github.com/cvdlab-cg/220279/tree/final-project">GitHub</a>
@@ -38,12 +38,10 @@
 		<p>Unfortunately the villa was almost destroyed by bombardment during World War II and then recently reconstructed with some modifications.<a class="external" target="_blank" href="http://www.cisapalladio.org/veneto/scheda.php?sezione=4&architettura=34&lingua=e"></a></p>
 		<p>The villa, as of today, is quite different from what Palladio had in mind: while the ground floor is mostly the same in respect of the original project, the top (and last floor) is totally different. In additon some extra structures (that are partially destroyed) has been added on the back of the villa and a wall divides the front area, with the garden, from the back one that is inaccessible from the public.</p>
 
-		<!-- <cite>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</cite> -->
-
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
 
-		<h1 name="Architettura">Description</h1>
+		<h1 name="Architettura">General description of the project</h1>
 		<img class="floatRight resizeLarge" title="Aerial photo" src="docimg/Alto_20m_doc.png" />
 		<p>Reproducing the villa in 3D, whetever as of today or as of the original project, is quite impossible: lack of documentation makes improbable the definition of a coherent structure to implement and show. Infact while of the original project only two projections are publicy available (front and basement) of the today structure there is an abundance of photo shoots of the front area of the villa (that is publicy accessible) but none of the other parts that are inaccessible to the public.</p>
 		<p>The first step was to gather all the possible documentation to make an informed decision on how to develop the whole project: after gathering a pletora of images the first decision was to make an <i>hybrid</i> between the original Palldio project and the villa as it is today. It was decided to proceed as follow:
@@ -58,14 +56,20 @@
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
 
-		<h1>Interdum</h1>
+		<h1 name="Decomposition">Hierarchical decomposition</h1>
 		<p>Praesent nisi sem, bibendum in, ultrices sit amet, euismod sit amet, dui. Donec varius tincidunt nisi. Ut ut sapien. Integer porta. Fusce nibh. Curabitur pellentesque, lectus at <a href="index.html">volutpat interdum</a>, sem justo placerat elit, eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie. Nullam semper massa eget ligula. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque a nibh quis nunc volutpat aliquam</p>
+		<ul>
+			<li><a href="index.html#FrontSide">Front Side</a></li>
+		</ul>
+		
+		<h2 name="FrontSide">Front side</h2>
 		<code>margin-bottom: 12px;
 font: normal 1.1em "Lucida Sans Unicode",serif;
 background: url(img/quote.gif) no-repeat;
 padding-left: 28px;
 color: #555;</code>
 		<p>Eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie.</p>
+		<!-- <cite>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</cite> -->		
 	</div>
 
 	<div class="footer">
