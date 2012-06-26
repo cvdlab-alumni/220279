@@ -129,9 +129,9 @@ img.fakeZoom {}
 	background: url(img/navigation.jpg) no-repeat;
 	color: #FFF;
 	float: left;
-	font: bold 1.2em serif;
+	font: bold 1.1em serif;
 	height: 31px; 
-	letter-spacing: 1px;
+	letter-spacing: 0.4px;
 	line-height: 31px;
 	text-align: center;
 	text-decoration: none;
