@@ -15,6 +15,10 @@ Feel free to use and modify but please provide credits.
 a {
 	color: #362;
 }
+a.external {
+	background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAVklEQVR4Xn3PgQkAMQhDUXfqTu7kTtkpd5RA8AInfArtQ2iRXFWT2QedAfttj2FsPIOE1eCOlEuoWWjgzYaB/IkeGOrxXhqB+uA9Bfcm0lAZuh+YIeAD+cAqSz4kCMUAAAAASUVORK5CYII=") no-repeat scroll right center transparent;
+	padding-right: 13px;
+}
 a:hover, .footer a:hover {
 	color: #111;
 }
@@ -54,6 +58,21 @@ cite {
 	color: #663;
 	font: normal 1.1em "Lucida Sans Unicode",serif;
 	padding-left: 28px;
+}
+
+img.floatLeft { 
+    float: left; 
+    margin-right: 10px; 
+}
+
+img.floatRight { 
+    float: right; 
+    margin-left: 10px; 
+}
+
+img.resizeHalf { 
+    width: 40%; 
+    height: 40%; 
 }
 
 /* misc */
