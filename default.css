@@ -73,8 +73,8 @@ img.floatRight {
 }
 
 img.resizeTiny { 
-    width: 50%; 
-    height: 50%; 
+    width: 30%; 
+    height: 30%; 
 }
 
 img.resizeHalf { 
@@ -93,7 +93,7 @@ img.fakeZoom {}
 .divider {
 	background: url(img/divider.gif) no-repeat;
 	height: 24px;
-	margin: 16px 0;
+	margin: 16px 160px;
 }
 .clearer {
 	clear: both;
