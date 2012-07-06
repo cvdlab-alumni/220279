@@ -82,7 +82,7 @@ var CommonDomains = function() {}
 
 CommonDomains.DIM1_DOMAIN = INTERVALS(1)(50);
 CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([50,1]);
-CommonDomains.DIM2_DOMAIN_LOWRES = DOMAIN([[0,1],[0,1]])([15,1]);
+CommonDomains.DIM2_DOMAIN_LOWRES = DOMAIN([[0,1],[0,1]])([20,1]);
 CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([25,25]);
 CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([25,25]);
 CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([50,1,1]);
@@ -1039,13 +1039,13 @@ Patio.prototype.creaSoffitto = function() {
 
 Patio.prototype.creaPatio = function(fullColonnato) {
 	var modelloParetiPatio = T([1])([this.profonditaPatio])( this.refParetiColonnato.creaParetePatio() );
-	// var modelloColonnato = this.creaColonnato(fullColonnato);
+	var modelloColonnato = this.creaColonnato(fullColonnato);
 	var modelloCornicione = T([2])([this.altezzaCornicione])( this.creaFullCornicione() );
 	var modelloSoffitto = T([2])([this.altezzaCornicione])( this.creaSoffitto() );
 
 	var modelloFinale = STRUCT([
 									modelloParetiPatio,
-	//								modelloColonnato,
+									modelloColonnato,
 									modelloCornicione,
 									modelloSoffitto
 								]);
@@ -1255,6 +1255,192 @@ PareteBalconcino.prototype.creaParete = function() {
 
 // --------------------------
 
+function TimpanoFacciata() {
+	this.hMaxPointsSotto = 3;
+	this.angoloDefault = 25.9445;
+};
+
+TimpanoFacciata.prototype.getCPointsSotto = function() {
+	var ctPoints = [
+						// A
+						[0,0,0],[0,0,0],
+						// B,C,D
+						[1,0,0],[1,2,0],[2,2,0],
+						// E,F,G
+						[2,2.5,0],[2.5,2.5,0],[2.5,this.hMaxPointsSotto,0],
+						// H
+						[0,this.hMaxPointsSotto,0],[0,this.hMaxPointsSotto,0]
+					];
+
+	return ctPoints.map(function(item){ return item; });
+};
+
+TimpanoFacciata.prototype.getCPointsLaterale = function() {
+	var ctPoints = [
+						// A
+						[0,0,0],[0,0,0],
+						// B,C,D
+						[0.5,0,0],[0.5,2,0],[1,2,0],
+						// E,F,G
+						[1,3,0],[2,3,0],[1.7,4,0],
+						// H,I
+						[1.4,4,0],[1.4,5,0],
+						// L
+						[0,5,0],[0,5,0]
+					];
+
+	return ctPoints.map(function(item){ return item; });
+};
+
+TimpanoFacciata.prototype.creaTappoLaterale = function(ctPoints) {
+	var curvaTappo = CurveUtils.createS0NUBS(1, ctPoints);
+	var curvaFakePoint = CurveUtils.createBezier(S0, [ctPoints[ctPoints.length-1]]);
+	
+	return CurveUtils.createBezier(S1, [curvaTappo, curvaFakePoint]);
+};
+
+TimpanoFacciata.prototype.creaCornicioneRetto = function(lengthCorn) {
+	var ctPoints = this.getCPointsSotto();
+
+	// Metti punti in XZ
+	ctPoints = PointUtils.ruotaPunti(ctPoints, PI/2, 0);
+	var prof1 = CurveUtils.createS0NUBS(1, ctPoints);
+
+	// CYLINDRICAL_SURFACE
+	var mapProfileCornicione = CYLINDRICAL_SURFACE(prof1)([0,lengthCorn,0]);
+
+	// Tappo sul retro
+	var tappoRetro = SIMPLICIAL_COMPLEX([ ctPoints[0], ctPoints[ctPoints.length-1], 
+		[ ctPoints[ctPoints.length-1][0], ctPoints[ctPoints.length-1][1] + lengthCorn, ctPoints[ctPoints.length-1][2] ], 
+		[ ctPoints[0][0], ctPoints[0][1] + lengthCorn, ctPoints[0][2] ],
+		ctPoints[0]  ])([[0,1,2],[2,3,4]]);
+
+	// Tappi laterali
+	var tappiLaterali = [];
+	tappiLaterali.push( this.creaTappoLaterale(ctPoints) );
+	tappiLaterali.push( this.creaTappoLaterale(PointUtils.traslaPunti(ctPoints, 1, lengthCorn)) );
+
+	return STRUCT([
+					this.creaFregio(lengthCorn, 1),
+					STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
+					tappoRetro,
+					MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
+				]);
+};
+
+TimpanoFacciata.prototype.creaCornicioneAngolato = function(lengthCorn, angoloGradi) {
+	angoloGradi = angoloGradi || this.angoloDefault;
+	//
+	var ctPoints = this.getCPointsSotto();
+	//
+	var angoloRadianti = angoloGradi * PI / 180;
+	var componenteY = lengthCorn*COS(angoloRadianti);
+	var componenteZ = lengthCorn*SIN(angoloRadianti);
+
+	// Metti punti in XZ
+	ctPoints = PointUtils.ruotaPunti(ctPoints, PI/2, 0);
+	ctPoints = PointUtils.ruotaPunti(ctPoints, angoloRadianti, 0);
+	ctPoints = PointUtils.traslaPunti(ctPoints, 1, (this.hMaxPointsSotto-1.5)*SIN(angoloRadianti));
+	var prof1 = CurveUtils.createS0NUBS(1, ctPoints);
+
+	// CYLINDRICAL_SURFACE
+	var mapProfileCornicione = CYLINDRICAL_SURFACE(prof1)([0,componenteY,componenteZ]);
+
+	// Tappi laterali
+	var tappiLaterali = [];
+	tappiLaterali.push( this.creaTappoLaterale(ctPoints) );
+	tappiLaterali.push( this.creaTappoLaterale( PointUtils.traslaPunti( PointUtils.traslaPunti(ctPoints, 1, componenteY), 2, componenteZ ) ) );
+
+	// Tappo sul retro
+	var tappoRetro = SIMPLICIAL_COMPLEX([ ctPoints[0], ctPoints[ctPoints.length-1], 
+		[ ctPoints[ctPoints.length-1][0], ctPoints[ctPoints.length-1][1] + componenteY, ctPoints[ctPoints.length-1][2] + componenteZ ], 
+		[ ctPoints[0][0], ctPoints[0][1] + componenteY, ctPoints[0][2] + componenteZ ],
+		ctPoints[0]  ])([[0,1,2],[2,3,4]]);
+
+	return STRUCT([
+					R([1,2])(angoloRadianti)( this.creaFregio(lengthCorn, 2, -1) ),
+					STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
+					tappoRetro,
+					MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
+				]);
+};
+
+TimpanoFacciata.prototype.creaCornicioneRaccordo = function(angoloGradi) {
+	angoloGradi = angoloGradi || this.angoloDefault;
+	//
+	var ctPoints = this.getCPointsSotto();
+	//
+	var angoloRadianti = angoloGradi * PI / 180;
+
+	// Metti punti in XZ
+	ctPoints = PointUtils.ruotaPunti(ctPoints, PI/2, 0);
+	// Punti controllo sinistro e destro
+	var sinPoints = PointUtils.ruotaPunti(ctPoints, angoloRadianti, 0);
+	var desPoints = PointUtils.ruotaPunti(ctPoints, PI*2 - angoloRadianti, 0);
+
+	// Profilo centrale
+	var profC = CurveUtils.createS0NUBS(1, ctPoints);
+	// Profilo sinistro
+	var profS = CurveUtils.createS0NUBS(1, sinPoints);
+	// Profilo destro
+	var profD = CurveUtils.createS0NUBS(1, desPoints);
+
+	var mapProfili = [];
+	mapProfili.push( NUBS(S1)(1)([0,0,3,3])([profS,profC]) );
+	mapProfili.push( NUBS(S1)(1)([0,0,3,3])([profC,profD]) );
+
+	return STRUCT( CONS( AA(MAP)(mapProfili) )( CommonDomains.DIM2_DOMAIN_LOWRES ) );
+};
+
+TimpanoFacciata.prototype.creaFregio = function(lengthCorn, startFregio, endFregio) {
+	startFregio = startFregio || 1;
+	endFregio = endFregio || startFregio;
+  
+
+	// Mini cuboids
+	var cubiArray = [];
+	cubiArray.push( T([0,1,2])([1,startFregio,1]) );
+
+	var cubeSingleDim = {"x": 0.6, "y": 1, "z": 1};
+	var cubeSingle = CUBOID([cubeSingleDim.x,cubeSingleDim.y,cubeSingleDim.z]);
+	var transCubo = T([1])([cubeSingleDim.y*(5/2)]);
+
+	var spazioCubi = Math.floor( ( lengthCorn + cubeSingleDim.y*(5/2) - (startFregio + endFregio) ) / ((5/2)*cubeSingleDim.y) );
+
+	for(var qtyCubi = spazioCubi;  qtyCubi > 0; qtyCubi--) {
+		cubiArray.push(cubeSingle);
+		cubiArray.push(transCubo);
+	}
+
+	return STRUCT(cubiArray);
+};
+
+// 103.43/2 57.06 24.96  
+TimpanoFacciata.prototype.creaTimpano = function(halfBase, ipotenusa, altezza) {
+	var base = halfBase * 2;
+	var angoloGradi = Math.asin(altezza/ipotenusa) *  180 / PI;
+	// Errori approssimazione
+	var altezzaDelta = 0.06;
+	var angoloDelta = 1.85;
+
+	// altezza = Math.abs( ipotenusa*SIN(angoloGradi) );
+
+	console.log(altezza);
+	console.log(Math.abs( ipotenusa*Math.sin(angoloGradi) ));
+	var resultModel = [];
+	resultModel.push(this.creaCornicioneRetto(base));
+	resultModel.push(this.creaCornicioneAngolato(ipotenusa, angoloGradi));
+	resultModel.push(T([1])([base])( S([1])([-1])( this.creaCornicioneAngolato(ipotenusa, angoloGradi) ) ) );
+	resultModel.push( T([1,2])([halfBase,altezza - altezzaDelta])( this.creaCornicioneRaccordo(angoloGradi - angoloDelta) ) );
+	// test
+
+	return R([0,1])(-PI/2)( T([1])([-halfBase])( STRUCT(resultModel) ) );
+};
+
+
+
+// --------------------------
+
 function FacciataCentrata() {
 	this.refPatio = new Patio(); // centroPatioX
 	this.refPareti = new ModuliPareti();
@@ -1283,9 +1469,11 @@ function Progetto() {
 	this.refFacciata = new FacciataCentrata();
 };
 
-var createProfileNew = function() {
-	var pbTest = new PareteBalconcino();
-	DRAW( pbTest.creaPareteFinestraBalconcino() );
+var createProfileNew = function(objectX) {
+	var tf = new TimpanoFacciata();
+	// 103.43 57.06 24.96
+	DRAW( T([2])([objectX.refBalconcino.altezzaParete+objectX.refPatio.altezzaSupCornicione])( tf.creaTimpano(103.5 / 2, 57, 25 ) ));
+	// DRAW( tf.creaTimpano(103.5 / 2, 57, 25 ) );
 };
 
 
@@ -1299,7 +1487,7 @@ var runTest = function() {
 	// var c = new ColonnaBalconcino();
 	// DRAW( c.creaColonna() );
 
-	// createProfileNew();
+	createProfileNew(p.refFacciata);
 };
 
 runTest();
