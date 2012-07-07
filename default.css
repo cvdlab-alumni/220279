@@ -22,7 +22,6 @@ a.external {
 a:hover, .footer a:hover {
 	color: #111;
 }
-a.fakeZoom {}
 
 body {	
 	background: #769359 url(img/bg.jpg) repeat-y center top;
@@ -86,8 +85,6 @@ img.resizeLarge {
     width: 60%; 
     height: 60%; 
 }
-
-img.fakeZoom {}
 
 /* misc */
 .divider {

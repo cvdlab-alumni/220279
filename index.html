@@ -7,18 +7,67 @@
 	<meta name="keywords" content="valmarana,scagnolari,zen,plasm,javascript,plasm.js,cvdlab,cvdlab-cg"/> 
 	<meta name="author" content="Francesco Furiani"/> 
 	<link rel="stylesheet" type="text/css" href="default.css" media="screen"/>
+	<link rel="stylesheet" type="text/css" href="galleryLib/jquery.ad-gallery.css" media="screen"/>
+	<link rel="stylesheet" href="js/source/jquery.fancybox.css?v=2.0.6" type="text/css" media="screen" />
 	<title>Villa Valmarana Scagnolari Zen, a PLASM.js 3D rappresentation</title>
 
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/jquery.shadow.js"></script>
-	<script type="text/javascript" src="js/jquery.ifixpng.js"></script>
-	<script type="text/javascript" src="js/jquery.fancyzoom.js"></script>
+	<!-- <script type="text/javascript" src="js/jquery.js"></script> -->
+	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+	<script type="text/javascript" src="js/source/jquery.fancybox.pack.js?v=2.0.6"></script>
+	<script type="text/javascript" src="galleryLib/jquery.ad-gallery.min.js"></script>
 	<script type="text/javascript">
 	$(function() {
-		$.fn.fancyzoom.defaultsOptions.imgDir='ressources/'; //very important must finish with a /
+		$(".fancybox").fancybox({
+        	beforeShow: function () {
+	            /* Disable right click */
+	            $.fancybox.wrap.bind("contextmenu", function (e) {
+	                    return false;
+            	});
+        	}  
+		});
 
-		$('a.fakeZoom').fancyzoom({Speed:250, overlay:0.4});
-		$("a.fakeZoom").fancyzoom();
+		// Gallery
+		var galleries = $('.ad-gallery').adGallery({
+		  loader_image: 'loader.gif',
+		  width: 860, 
+		  height: 400, 
+		  thumb_opacity: 0.7,
+		  start_at_index: 0, 
+		  update_window_hash: false, 
+		  animate_first_image: false,
+		  animation_speed: 400, 
+		  display_next_and_prev: true, 
+		  display_back_and_forward: false, 
+		  scroll_jump: 0, 
+		  slideshow: {
+		    enable: false,
+		    autostart: false,
+		    speed: 5000,
+		    start_label: 'Start',
+		    stop_label: 'Stop',
+		    stop_on_scroll: true
+		  },
+		  // or 'slide-vert', 'resize', 'fade', 'none' or false
+		  effect: 'slide-vert', 
+		  enable_keyboard_move: false, 
+		  cycle: true
+		});
+
+		$(document).on("click", ".ad-image", function() {
+		    $.fancybox.open({
+			        href : $(this).find("img").attr("src"),
+			        closeBtn: true,
+			        closeClick : true,
+			        openEffect : 'elastic',
+			        openSpeed  : 150,
+			        closeEffect : 'elastic',
+			        closeSpeed  : 150,
+			        helpers : {
+			          overlay : null
+			        }
+		    });
+		});
+
 	});
 	</script>
 </head>
@@ -47,43 +96,116 @@
 
 		<h1>Introduction<a name="Introduzione"></a></h1>
 		<p>Villa Valmarana (also known as Valmarana Scagnolari Zen) is a Renaissance villa in the province of Vicenza. It is one of the many villas designed by Andrea Palladio and described in his famous book collection "I Quattro Libri dell'Architettura" (The Four Books of Architecture) published in 1570.</p>
-		<a href="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" class="fakeZoom"><img class="floatLeft resizeTiny fakeZoom" title="Villa Valmarana original project" src="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" /></a>
+		<a href="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" class="fancybox"><img class="floatLeft resizeTiny" title="Villa Valmarana original project" src="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" /></a>
 		<p>The villa, as of today, is quite different from the one that Palladio designed for Gianfrancesco Valmarana, around 1563: as can be seen from the image (on the right) it shows a structure with double-storey loggias, enclosed by small towers on both fronts. The project, as intended, was never completed because the build works were interrupted in 1566 by the death of Gianfrancesco and were probably concluded by his nephew Leonardo (the heir of the family) probably using less funds. The second storey of loggias was never constructed and the middle section was terminated with some sort of attic.</p>
 		<p>Unfortunately the villa was almost destroyed by bombardment during World War II and then recently reconstructed with some modifications.<a class="external" target="_blank" href="http://www.cisapalladio.org/veneto/scheda.php?sezione=4&architettura=34&lingua=e"></a></p>
-		<p>The villa, after the latest reconstruction, is quite different from what Palladio had in mind: while the ground floor is mostly the same in respect of the original project, the top (and last floor) is totally different. In additon some extra structures (that are partially destroyed) has been added on the back of the villa (a wing facing north) and a wall divides the front area, with the garden, from the back one that is inaccessible from the public.</p>
+		<p>The villa, after the latest reconstruction, is quite different from what Palladio had in mind: while the ground floor is mostly the same in respect of the original project, the top (and last floor) is totally different. In additon some extra structure (that is partially in ruins) has been added on the back of the villa (a wing facing north) and a wall divides the front area, with the garden, from the back one that is inaccessible to the public.</p>
 
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
 
 		<h1>General description of the project<a name="Architettura"></a></h1>
-		<a href="docimg/Alto_20m_doc.png" class="fakeZoom"><img class="floatRight resizeHalf fakeZoom" title="Aerial photo" src="docimg/Alto_20m_doc.png" /></a>
-		<p>Reproducing the villa in 3D, whetever as of today or as of the original project, is quite impossible: lack of documentation makes improbable the definition of a coherent structure to implement and show. Infact the original project consist of only two projections (front and basement) and of the today structure there is an abundance of photo shoots of the front area of the villa (that is publicy accessible) but none of the other parts that are inaccessible to the public.</p>
+		<a href="docimg/Alto_20m_doc.png" class="fancybox"><img class="floatRight resizeHalf" title="Aerial photo" src="docimg/Alto_20m_doc.png" /></a>
+		<p>Reproducing the villa in 3D, whetever as of today or as of the original project, is quite impossible: lack of documentation makes improbable the definition of a coherent structure to implement and show. Infact the original project consist of only two projections (front and basement) and of the today structure there is an abundance of photo shoots of the front area of the villa (that is publicy accessible) but none of the other parts (that are inaccessible to the public).</p>
 		<p>The first step was to gather all the possible documentation to make an informed decision on how to develop the whole project: after gathering a pletora of images I decided to build a <i>hybrid</i> between the original Palladio project and the villa as it is today. It was decided to proceed as follow:
 		<ul>
 			<li>gather the finest documentation on the front section of the villa (the south entrance in the aerial photo) and one of the two sides (the east one);</li>
 			<li>use the original Palladio project to design the missing sides (using as basis the villa as of today);</li>
-			<li>the post War World II addition (the garden wall and the partially demolished north wing) were removed.</li>
+			<li>remove the post War World II additions (the garden wall and the partially demolished north wing).</li>
 		</ul>
-		Using these two guidelines I've analyzed the villa and started the hierarchical decomposition in sub-areas to proceed with the reconstruction.
+		Using these three guidelines I've analyzed the villa and started the hierarchical decomposition in sub-areas to proceed with the reconstruction.
 		</p>
 
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
 
 		<h1>Hierarchical decomposition<a name="Decomposition"></a></h1>
-		<p>Praesent nisi sem, bibendum in, ultrices sit amet, euismod sit amet, dui. Donec varius tincidunt nisi. Ut ut sapien. Integer porta. Fusce nibh. Curabitur pellentesque, lectus at <a href="index.html">volutpat interdum</a>, sem justo placerat elit, eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie. Nullam semper massa eget ligula. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Pellentesque a nibh quis nunc volutpat aliquam</p>
+		<p>The hierarchical decomposition of the villa was done with a top-down approach.<br />
+			Using the approach wrote in the <a href="#Architettura">above section</a> the villa was divided in 3 main parts:
 		<ul>
-			<li><a href="#FrontSide">Front Side</a></li>
+			<li><a href="#Facade">Facade</a> (South side)</li>
+			<li><a href="#SideWall">Side Wall</a> (East side)</li>
+			<li><a href="#Roof">Roof</a></li>
 		</ul>
-		
-		<h2>Front side<a name="FrontSide"></a></h2>
-		<code>margin-bottom: 12px;
-font: normal 1.1em "Lucida Sans Unicode",serif;
-background: url(img/quote.gif) no-repeat;
-padding-left: 28px;
-color: #555;</code>
+		Each component was then decomposed in sub-ojects that assembled together through translation, rotations and duplications made possible recreating the villa.<br />
+		Besides the decomposition, to found a viable scale usage of aerial images was employed.
+		</p>
+
+		<h2>Facade<a name="Facade"></a></h2>
+		<h2>Side Wall<a name="SideWall"></a></h2>
+		<h2>Roof<a name="Roof"></a></h2>
+
+		<div class="clearer"><span></span></div>
+		<div class="divider"></div>
+
+		<h1>Conclusion<a name="Considerazioni"></a></h1>
+
 		<p>Eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie.</p>
-		<!-- <cite>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</cite> -->		
+		<p>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</p>
+
+		<h2>Author sketches and notes</h2>
+		<div id="gallery" class="ad-gallery">
+      		<div class="ad-image-wrapper">
+      		</div>
+      		<div class="ad-controls">
+      		</div>
+      		<div class="ad-nav">
+        		<div class="ad-thumbs">
+          			<ul class="ad-thumb-list">
+                        <li>
+              				<a href="img/notes/image01.jpg">
+                				<img src="img/notes/thumbs/th_image01.jpg" 
+                					 alt="Measurements of walls"
+                					  />
+            	  			</a>
+			            </li>
+                        <li>
+              				<a href="img/notes/image02.jpg">
+                				<img src="img/notes/thumbs/th_image02.jpg" 
+                					 alt="Doors pattern"
+                					  />
+            	  			</a>
+			            </li>
+                        <li>
+              				<a href="img/notes/image03.jpg">
+                				<img src="img/notes/thumbs/th_image03.jpg" 
+                					 alt="Balcony columns"
+                					  />
+            	  			</a>
+			            </li>
+                        <li>
+              				<a href="img/notes/image04.jpg">
+                				<img src="img/notes/thumbs/th_image04.jpg" 
+                					 alt="Patio cornice"
+                					  />
+            	  			</a>
+			            </li>
+                        <li>
+              				<a href="img/notes/image05.jpg">
+                				<img src="img/notes/thumbs/th_image05.jpg" 
+                					 alt="Gable schematics"
+                					  />
+            	  			</a>
+			            </li>
+                        <li>
+              				<a href="img/notes/image06.jpg">
+                				<img src="img/notes/thumbs/th_image06.jpg" 
+                					 alt="Doors, windows, balcony"
+                					  />
+            	  			</a>
+			            </li>			            			            			            			         
+                        <li>
+              				<a href="img/notes/image07.jpg">
+                				<img src="img/notes/thumbs/th_image07.jpg" 
+                					 alt="Column and spirals"
+                					  />
+            	  			</a>
+			            </li>			            
+					</ul>
+				</div>
+			</div>
+		</div>		
+		
 	</div>
 
 	<div class="footer">
@@ -94,3 +216,12 @@ color: #555;</code>
 
 </body>
 </html>
+
+<!--
+		<code>margin-bottom: 12px;
+font: normal 1.1em "Lucida Sans Unicode",serif;
+background: url(img/quote.gif) no-repeat;
+padding-left: 28px;
+color: #555;</code>
+		<p>Eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie.</p>
+		 <cite>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</cite> -->	
