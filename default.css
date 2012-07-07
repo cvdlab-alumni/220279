@@ -76,13 +76,37 @@ img.resizeTiny {
     height: 30%; 
 }
 
+img.resizeTinyW { 
+    width: 30%; 
+}
+
+img.resizeTinyH { 
+    height: 30%; 
+}
+
 img.resizeHalf { 
     width: 50%; 
     height: 50%; 
 }
 
+img.resizeHalfW { 
+    width: 50%; 
+}
+
+img.resizeHalfH { 
+    height: 50%; 
+}
+
 img.resizeLarge { 
     width: 60%; 
+    height: 60%; 
+}
+
+img.resizeLargeW { 
+    width: 60%; 
+}
+
+img.resizeLargeH { 
     height: 60%; 
 }
 
