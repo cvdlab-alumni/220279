@@ -29,29 +29,37 @@
 
 		// Gallery
 		var galleries = $('.ad-gallery').adGallery({
-		  loader_image: 'loader.gif',
-		  width: 860, 
-		  height: 400, 
-		  thumb_opacity: 0.7,
-		  start_at_index: 0, 
-		  update_window_hash: false, 
-		  animate_first_image: false,
-		  animation_speed: 400, 
-		  display_next_and_prev: true, 
-		  display_back_and_forward: false, 
-		  scroll_jump: 0, 
-		  slideshow: {
-		    enable: false,
-		    autostart: false,
-		    speed: 5000,
-		    start_label: 'Start',
-		    stop_label: 'Stop',
-		    stop_on_scroll: true
-		  },
-		  // or 'slide-vert', 'resize', 'fade', 'none' or false
-		  effect: 'slide-vert', 
-		  enable_keyboard_move: false, 
-		  cycle: true
+			loader_image: 'loader.gif',
+			width: 860, 
+			height: 400, 
+			thumb_opacity: 0.7,
+			start_at_index: 0, 
+			update_window_hash: false, 
+			animate_first_image: false,
+			animation_speed: 400, 
+			display_next_and_prev: true, 
+			display_back_and_forward: false, 
+			scroll_jump: 0, 
+			slideshow: {
+				enable: false,
+				autostart: false,
+				speed: 5000,
+				start_label: 'Start',
+				stop_label: 'Stop',
+				stop_on_scroll: true
+			},
+			// or 'slide-vert', 'resize', 'fade', 'none' or false
+			effect: 'slide-vert', 
+			enable_keyboard_move: false, 
+			cycle: true,
+			init: function() {
+			    // preloadAll uses recursion to preload each image right after one another
+			    this.preloadAll();
+			    // Or, just preload the first three
+			    this.preloadImage(0);
+			    this.preloadImage(1);
+			    this.preloadImage(2);
+			}
 		});
 
 		// Gallery show image
