@@ -1,5 +1,3 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
-"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
 <head>
 	<meta http-equiv="content-type" content="text/html; charset=iso-8859-1"/>
@@ -11,13 +9,16 @@
 	<link rel="stylesheet" href="js/source/jquery.fancybox.css?v=2.0.6" type="text/css" media="screen" />
 	<title>Villa Valmarana Scagnolari Zen, a PLASM.js 3D rappresentation</title>
 
-	<!-- <script type="text/javascript" src="js/jquery.js"></script> -->
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/source/jquery.fancybox.pack.js?v=2.0.6"></script>
 	<script type="text/javascript" src="galleryLib/jquery.ad-gallery.min.js"></script>
 	<script type="text/javascript">
 	$(function() {
 		$(".fancybox").fancybox({
+	        openSpeed  : 300,
+	        closeSpeed  : 150,			
+			openEffect  : 'elastic',
+		    closeEffect : 'elastic',
         	beforeShow: function () {
 	            /* Disable right click */
 	            $.fancybox.wrap.bind("contextmenu", function (e) {
@@ -53,21 +54,24 @@
 		  cycle: true
 		});
 
+		// Gallery show image
 		$(document).on("click", ".ad-image", function() {
 		    $.fancybox.open({
-			        href : $(this).find("img").attr("src"),
-			        closeBtn: true,
-			        closeClick : true,
-			        openEffect : 'elastic',
-			        openSpeed  : 150,
-			        closeEffect : 'elastic',
-			        closeSpeed  : 150,
-			        helpers : {
-			          overlay : null
-			        }
+			    href : $(this).find("img").attr("src"),
+			    closeBtn: true,
+			    closeClick : true,
+			    openSpeed  : 300,
+			    closeSpeed  : 150,
+				openEffect  : 'elastic',
+				closeEffect : 'elastic',
+		        beforeShow: function () {
+			        /* Disable right click */
+			        $.fancybox.wrap.bind("contextmenu", function (e) {
+			                return false;
+		           	});
+		        }				    
 		    });
 		});
-
 	});
 	</script>
 </head>
