@@ -478,6 +478,8 @@ CommonParetiMeasure.altezzaParete = 40.7;
 //
 CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio = 4/3;
 CommonParetiMeasure.cornicioneSuperiore_AltezzaRatio = 4/3;
+//
+CommonParetiMeasure.torretta = {"pareteSenzaFinestra": 7, "profonditaLaterale": 4};
 
 // --------------------------
 
@@ -1627,7 +1629,6 @@ TimpanoFull.prototype.creaTimpano = function() {
 	return STRUCT(finalModel);
 };
 
-
 // --------------------------
 
 function FacciataCentrata() {
@@ -1635,27 +1636,44 @@ function FacciataCentrata() {
 	this.refPareti = new ModuliPareti();
 	this.refBalconcino = new PareteBalconcino(this.refPatio);
 	this.refFullTimpano = new TimpanoFull();
-
+	//
 	this.fullColonnato = !PROJECT_ONECOLUMN;
+	this.halfLength = 0;
+};
+
+FacciataCentrata.prototype.getHalfLength = function() {
+	return this.halfLength - 3*this.refPareti.spessoreParete;
 };
 
 FacciataCentrata.prototype.creaFacciataDestra = function() {
-	var larghezzaPareteFrontale = 7;
+	var larghezzaPareteFrontale = CommonParetiMeasure.torretta.pareteSenzaFinestra;
+	var profonditaLaterale = CommonParetiMeasure.torretta.profonditaLaterale;
 	var pareteLateraleRModel = [];
 
 	pareteLateraleRModel.push( T([0,1])([this.refPatio.centroPatioX, this.refPatio.startPatio]) ); 
+	this.halfLength += this.refPatio.centroPatioX - this.refPareti.spessoreParete;
+
 	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraPiccola()  );
 	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
 	pareteLateraleRModel.push( R([0,1])(-PI/2)( this.refPareti.pareteAlta(this.refBalconcino.larghezzaPareteLaterale) ) );
 	pareteLateraleRModel.push( T([1])([-this.refBalconcino.larghezzaPareteLaterale]) );
 	pareteLateraleRModel.push( T([0])([-this.refPareti.spessoreBordo])( this.refPareti.getCornicioneCubico() ) );
 	pareteLateraleRModel.push( this.refPareti.getCornicioni(this.refPareti.spessoreParete) );
 	pareteLateraleRModel.push( T([0])([this.refPareti.spessoreParete]) );
+	this.halfLength += this.refPareti.spessoreParete;
+
 	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
 	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale]) );
+	this.halfLength += larghezzaPareteFrontale;
+
 	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraPiccola()  );
 	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
 	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
+	this.halfLength += larghezzaPareteFrontale;
 
 	return STRUCT(pareteLateraleRModel);
 };
@@ -1677,8 +1695,102 @@ FacciataCentrata.prototype.creaFacciata = function() {
 
 // --------------------------
 
-function Progetto() {
+function FacciataLaterale() {
+	this.refPareti = new ModuliPareti();
+	//
+	this.halfLength = 0;
+};
+
+FacciataLaterale.prototype.getHalfLength = function() {
+	var approximationDelta = 0.035;
+	return this.halfLength - this.refPareti.spessoreParete - CommonParetiMeasure.spessoreBordo - approximationDelta;
+};
+
+FacciataLaterale.prototype.creaFacciataDestra = function() {
+	var larghezzaPareteFrontale = CommonParetiMeasure.torretta.pareteSenzaFinestra;
+	var profonditaLaterale = CommonParetiMeasure.torretta.profonditaLaterale;
+	var allineamentoPatio = 1;
+	//
+	var pareteLateraleRModel = [];
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale]) );
+	this.halfLength += larghezzaPareteFrontale;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraPiccola()  );
+	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale]) );
+	this.halfLength += larghezzaPareteFrontale;
+
+	pareteLateraleRModel.push( R([0,1])(-PI/2)( this.refPareti.pareteAlta(profonditaLaterale) ) );
+	pareteLateraleRModel.push( T([1])([-profonditaLaterale]) );
+	pareteLateraleRModel.push( T([0])([-this.refPareti.spessoreBordo])( this.refPareti.getCornicioneCubico() ) );
+	pareteLateraleRModel.push( this.refPareti.getCornicioni(this.refPareti.spessoreParete) );
+	pareteLateraleRModel.push( T([0])([this.refPareti.spessoreParete]) );
+	this.halfLength += this.refPareti.spessoreParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale+allineamentoPatio) );	
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale+allineamentoPatio]) );
+	this.halfLength += larghezzaPareteFrontale+allineamentoPatio;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraPiccola()  );
+	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale+allineamentoPatio) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale+allineamentoPatio]) );
+	pareteLateraleRModel.push( T([0])([ CommonParetiMeasure.spessoreBordo ]) );
+	this.halfLength += larghezzaPareteFrontale+allineamentoPatio; // + CommonParetiMeasure.spessoreBordo;
+
+	pareteLateraleRModel.push( COLOR(ColoriProgetto.DEBUG)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
+
+	return STRUCT(pareteLateraleRModel);
+};
+
+FacciataLaterale.prototype.creaFacciata = function() {
+	var finalModel = [];
+
+	var pareteLateraleR = this.creaFacciataDestra();
+	var pareteLateraleL = S([0])([-1])( pareteLateraleR );
+
+	finalModel.push( pareteLateraleR );
+	finalModel.push( pareteLateraleL );
+
+	return STRUCT(finalModel);
+};
+
+// --------------------------
+
+function HalfWalls () {
 	this.refFacciata = new FacciataCentrata();
+	this.refLaterale = new FacciataLaterale();
+}
+
+HalfWalls.prototype.creaFacciate = function() {
+	var finalModel = [];
+
+	var pareteFrontale = this.refFacciata.creaFacciata();
+	var pareteLaterale = this.refLaterale.creaFacciata();
+
+	finalModel.push( pareteFrontale );
+	finalModel.push( R([0,1])(PI/2) );
+	finalModel.push( T([0,1])([this.refLaterale.getHalfLength(), -this.refFacciata.getHalfLength()]) );
+	finalModel.push( pareteLaterale );
+
+	return T([1])([-this.refLaterale.getHalfLength()])( STRUCT(finalModel) );
+};
+
+// --------------------------
+
+function Progetto() {
+	this.refhalfBase = new HalfWalls();
+	//
+	// Debug to be removed
+	this.refFacciata = this.refhalfBase.refFacciata;
+	this.refLaterale = this.refhalfBase.refLaterale;
 };
 
 var createProfileNew = function(objectX) {
@@ -1694,8 +1806,10 @@ var createProfileNew = function(objectX) {
 
 var runTest = function() {
 	var p = new Progetto();
-	DRAW( p.refFacciata.creaFacciata() );
-	
+	// DRAW( p.refFacciata.creaFacciata() );
+	// DRAW( p.refLaterale.creaFacciata() );
+	DRAW( p.refhalfBase.creaFacciate() );
+
 	// var c = new Colonna();
 	// DRAW(c.creaHalfCapitello());
 
