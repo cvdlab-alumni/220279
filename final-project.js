@@ -2,10 +2,11 @@
 
 var PROJECT_NOCOLUMNS = false;
 var PROJECT_ONECOLUMN = false;
+var PROJECT_3DCOLUMN = true;
 var PROJECT_NOBALCONCINI = false;
 var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
-var PROJECT_DEBUGWALLCONNECTION = false;
+var PROJECT_DEBUGWALLCONNECTION = true;
 
 var CommonDomains = function() {}
 
@@ -14,7 +15,10 @@ CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([50,1]);
 CommonDomains.DIM2_DOMAIN_LOWRES = DOMAIN([[0,1],[0,1]])([20,1]);
 CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([20,20]); // 25,25
 CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([20,20]);
-CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([50,1,1]);
+CommonDomains.DIM3_DOMAIN = null;
+if ( PROJECT_3DCOLUMN == true ) {
+	CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([50,1,1]);
+}
 
 // =================================================================================
 
@@ -359,7 +363,7 @@ Colonna.prototype.creaCapitello_TappoSpiraliLowRes = function(lunghTappo, scaleS
 };
 
 Colonna.prototype.creaHalfCapitello = function() {
-	var usaDominio3D = true;
+	var usaDominio3D = PROJECT_3DCOLUMN;
 	//
 	var zCapitello = -10;
 	var scalaSpiraleGrossa = 1.05;
