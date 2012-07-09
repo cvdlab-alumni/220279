@@ -29,6 +29,9 @@ ColoriProgetto.INFISSO_FINESTRA = [152/255, 118/255, 84/255];
 ColoriProgetto.INFISSO_PORTA = [65/255, 32/255, 0/255];
 ColoriProgetto.LEGNO_PORTA = [152/255, 118/255, 84/255];
 
+// Rosso Pompeiano (cit.)
+ColoriProgetto.TETTO = [210/255, 31/255, 27/255];
+
 ColoriProgetto.DEBUG = [255/255, 0/255, 0/255];
 
 // =================================================================================
@@ -474,7 +477,9 @@ var CommonParetiMeasure = function() {};
 CommonParetiMeasure.spessoreParete = 1;
 CommonParetiMeasure.spessoreBordo = 0.3;
 CommonParetiMeasure.larghezzaParete = 21;
+CommonParetiMeasure.larghezzaPareteLunga = 13;
 CommonParetiMeasure.altezzaParete = 40.7;
+CommonParetiMeasure.altezzaPareteLunga = 53.5;
 //
 CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio = 4/3;
 CommonParetiMeasure.cornicioneSuperiore_AltezzaRatio = 4/3;
@@ -815,8 +820,8 @@ CornicionePatio.prototype.creaCornicione = function(length, leftAngle, rightAngl
 function ModuliPareti() {
 	this.spessoreParete = CommonParetiMeasure.spessoreParete;
 	this.spessoreBordo = CommonParetiMeasure.spessoreBordo;
-	this.larghezzaParete = 13;
-	this.altezzaParete = 53.5;
+	this.larghezzaParete = CommonParetiMeasure.larghezzaPareteLunga;
+	this.altezzaParete = CommonParetiMeasure.altezzaPareteLunga;
 	//
 	this.deltaBordo = 0.5;
 	this.bordoS = 2;
@@ -1641,8 +1646,12 @@ function FacciataCentrata() {
 	this.halfLength = 0;
 };
 
+FacciataCentrata.prototype.getHalfLengthNoDelta = function() {
+	return this.halfLength;
+};
+
 FacciataCentrata.prototype.getHalfLength = function() {
-	return this.halfLength - 3*this.refPareti.spessoreParete;
+	return this.getHalfLengthNoDelta() - 3*this.refPareti.spessoreParete;
 };
 
 FacciataCentrata.prototype.creaFacciataDestra = function() {
@@ -1701,9 +1710,13 @@ function FacciataLaterale() {
 	this.halfLength = 0;
 };
 
+FacciataLaterale.prototype.getHalfLengthNoDelta = function() {
+	return this.halfLength;
+};
+
 FacciataLaterale.prototype.getHalfLength = function() {
 	var approximationDelta = 0.035;
-	return this.halfLength - this.refPareti.spessoreParete - CommonParetiMeasure.spessoreBordo - approximationDelta;
+	return this.getHalfLengthNoDelta() - this.refPareti.spessoreParete - CommonParetiMeasure.spessoreBordo - approximationDelta;
 };
 
 FacciataLaterale.prototype.creaFacciataDestra = function() {
@@ -1745,7 +1758,7 @@ FacciataLaterale.prototype.creaFacciataDestra = function() {
 	pareteLateraleRModel.push( T([0])([ CommonParetiMeasure.spessoreBordo ]) );
 	this.halfLength += larghezzaPareteFrontale+allineamentoPatio; // + CommonParetiMeasure.spessoreBordo;
 
-	pareteLateraleRModel.push( COLOR(ColoriProgetto.DEBUG)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
+	pareteLateraleRModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
 
 	return STRUCT(pareteLateraleRModel);
 };
@@ -1785,22 +1798,105 @@ HalfWalls.prototype.creaFacciate = function() {
 
 // --------------------------
 
+function Roof() {
+
+};
+
+Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto) {
+	var finalModel = [];
+
+	finalModel.push( T([0])([-halfX]) );
+
+	var sottoTetto = SIMPLICIAL_COMPLEX([[0,0,0], [halfX,0,0], [halfX,2*halfY,0], [0,2*halfY,0]])([[0,1,2],[2,3,0]]);
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)(sottoTetto) ); 
+
+	var salitaSinistra = SIMPLICIAL_COMPLEX([[0,0,0],[halfX-halfPatioX,halfY,altezzaTetto],[0,2*halfY,0]])([[0,1,2]]);
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSinistra) );
+
+	var salitaSottoSinistra = SIMPLICIAL_COMPLEX([[0,0,0],[halfX-halfPatioX,halfY,altezzaTetto],[halfX,halfY,altezzaTetto],[halfX,0,0]])([[0,1,2],[2,3,0]]);
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSottoSinistra) );
+
+	var salitaSopraSinistra = SIMPLICIAL_COMPLEX([[0,2*halfY,0],[halfX-halfPatioX,halfY,altezzaTetto],[halfX,halfY,altezzaTetto],[halfX,2*halfY,0]])([[0,1,2],[2,3,0]]);
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSopraSinistra) );	
+
+	return STRUCT(finalModel);
+};
+
+Roof.prototype.creaFullTetto = function(halfX, halfY, halfPatioX, altezzaTetto) {
+	var finalModel = [];
+	var halfTetto = this.creaHalfTetto(halfX, halfY, halfPatioX, altezzaTetto);
+
+	finalModel.push( halfTetto );
+	finalModel.push( S([0])([-1])( halfTetto ) );
+
+	return T([1])([-halfY])( STRUCT(finalModel) );
+};
+
+// --------------------------
+
 function Progetto() {
 	this.refhalfBase = new HalfWalls();
+	this.refTetto = new Roof();
 	//
 	// Debug to be removed
 	this.refFacciata = this.refhalfBase.refFacciata;
 	this.refLaterale = this.refhalfBase.refLaterale;
 };
 
-var createProfileNew = function(objectX) {
+Progetto.prototype.fullWalls = function() {
+	var finalModel = [];
+
+	var halfWall = this.refhalfBase.creaFacciate();
+
+	finalModel.push( halfWall );
+	finalModel.push( R([0,1])(PI) );
+	finalModel.push( halfWall );
+
+	return STRUCT(finalModel);
+};
+
+Progetto.prototype.fullRoof = function() {
+	var finalModel = [];
+
+	// Altezza
+	var deltaZ = CommonParetiMeasure.cornicioneSuperiore_AltezzaRatio * this.refhalfBase.refLaterale.refPareti.bordoV;
+	// Larghezza
+	var deltaX = CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * 5*this.refhalfBase.refLaterale.refPareti.spessoreBordo;
+	// Lunghezza
+	var deltaY = CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * 2*this.refhalfBase.refLaterale.refPareti.spessoreBordo;
+	var deltaAltezza = 0; // 3
+
+	finalModel.push( T([2])([CommonParetiMeasure.altezzaPareteLunga + deltaZ]) );
+	finalModel.push( this.refTetto.creaFullTetto(this.refhalfBase.refFacciata.getHalfLengthNoDelta() + deltaX, 
+												 this.refhalfBase.refLaterale.getHalfLengthNoDelta() + deltaY, 
+												this.refhalfBase.refFacciata.refPatio.centroPatioX, 
+												this.refhalfBase.refFacciata.refFullTimpano.altezzaTimpano + deltaAltezza ) );
+
+	return STRUCT(finalModel);
+};
+
+Progetto.prototype.disegnaModello = function() {
+	var finalModel = [];
+
+	finalModel.push( this.fullWalls() );
+	finalModel.push( this.fullRoof() );
+
+	return STRUCT(finalModel);
+};
+
+// --------------------------
+
+var createProfileNew = function(p) {
 	// var tf = new TimpanoFull();
 	// DRAW( tf.creaTimpano() );
 
-	// DRAW(objectX.refBalconcino.creaPareteLateraleBalconcino());
-	DRAW(objectX.refPareti.pareteAlta(objectX.refBalconcino.larghezzaPareteLaterale));
+	// DRAW(p.refFacciata.refBalconcino.creaPareteLateraleBalconcino());
+	// DRAW(p.refFacciata.refPareti.pareteAlta(p.refFacciata.refBalconcino.larghezzaPareteLaterale));
 
-	// DRAW( );
+	p.refhalfBase.creaFacciate();
+	var tt = new Roof();
+	DRAW( tt.creaFullTetto(p.refFacciata.getHalfLength(), p.refLaterale.getHalfLength(), 
+							p.refFacciata.refPatio.centroPatioX, p.refFacciata.refFullTimpano.altezzaTimpano ) );
 };
 
 
@@ -1808,7 +1904,9 @@ var runTest = function() {
 	var p = new Progetto();
 	// DRAW( p.refFacciata.creaFacciata() );
 	// DRAW( p.refLaterale.creaFacciata() );
-	DRAW( p.refhalfBase.creaFacciate() );
+	// DRAW( p.refhalfBase.creaFacciate() );
+	// DRAW( p.fullWalls() );
+	DRAW( p.disegnaModello() );
 
 	// var c = new Colonna();
 	// DRAW(c.creaHalfCapitello());
@@ -1816,7 +1914,7 @@ var runTest = function() {
 	// var c = new ColonnaBalconcino();
 	// DRAW( c.creaColonna() );
 
-	// createProfileNew(p.refFacciata);
+	// createProfileNew(p);
 };
 
 runTest();
