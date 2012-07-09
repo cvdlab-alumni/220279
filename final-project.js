@@ -6,7 +6,7 @@ var PROJECT_3DCOLUMN = true;
 var PROJECT_NOBALCONCINI = false;
 var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
-var PROJECT_DEBUGWALLCONNECTION = true;
+var PROJECT_DEBUGWALLCONNECTION = false;
 
 var CommonDomains = function() {}
 
