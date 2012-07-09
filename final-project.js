@@ -2,22 +2,42 @@
 
 var PROJECT_NOCOLUMNS = false;
 var PROJECT_ONECOLUMN = false;
-var PROJECT_3DCOLUMN = true;
+var PROJECT_3DCOLUMN = false;
 var PROJECT_NOBALCONCINI = false;
 var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
 var PROJECT_DEBUGWALLCONNECTION = false;
+// Warning this may crash Three.js and/or Plasm
+var PROJECT_HIGHRESOLUTION = false;
 
 var CommonDomains = function() {}
 
-CommonDomains.DIM1_DOMAIN = INTERVALS(1)(50);
-CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([50,1]);
-CommonDomains.DIM2_DOMAIN_LOWRES = DOMAIN([[0,1],[0,1]])([20,1]);
-CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([20,20]); // 25,25
-CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([20,20]);
+CommonDomains.DIM1_DOMAIN = null;
+CommonDomains.DIM2_DOMAIN = null;
+CommonDomains.DIM2_DOMAIN_LOWRES = null;
+CommonDomains.DIM2RP_DOMAIN = null;
+CommonDomains.DIM2R_DOMAIN = null;
 CommonDomains.DIM3_DOMAIN = null;
-if ( PROJECT_3DCOLUMN == true ) {
-	CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([50,1,1]);
+
+if (PROJECT_HIGHRESOLUTION == false) {
+	CommonDomains.DIM1_DOMAIN = INTERVALS(1)(35);
+	CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([35,1]);
+	CommonDomains.DIM2_DOMAIN_LOWRES = DOMAIN([[0,1],[0,1]])([15,1]);
+	CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([20,15]);
+	CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([1,20]);
+	if ( PROJECT_3DCOLUMN == true ) {
+		CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([35,1,1]);
+	}
+} else {
+	// Overrides 3D column settings
+	PROJECT_3DCOLUMN = true;
+	// Domains
+	CommonDomains.DIM1_DOMAIN = INTERVALS(1)(60);
+	CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([60,1]);
+	CommonDomains.DIM2_DOMAIN_LOWRES = CommonDomains.DIM2_DOMAIN; // No lowres xD
+	CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([30,30]);
+	CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([1,60]);
+	CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([60,1,1]);
 }
 
 // =================================================================================
