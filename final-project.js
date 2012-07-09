@@ -3,6 +3,9 @@
 var PROJECT_NOCOLUMNS = false;
 var PROJECT_ONECOLUMN = false;
 var PROJECT_NOBALCONCINI = false;
+var PROJECT_ONLYHALFWALL = false;
+var PROJECT_NOROOF = false;
+var PROJECT_DEBUGWALLCONNECTION = false;
 
 var CommonDomains = function() {}
 
@@ -1477,22 +1480,26 @@ TimpanoFacciata.prototype.creaCornicioneRetto = function(lengthCorn) {
 	var mapProfileCornicione = CYLINDRICAL_SURFACE(prof1)([0,lengthCorn,0]);
 
 	// Tappo sul retro
+	/*
 	var tappoRetro = SIMPLICIAL_COMPLEX([ ctPoints[0], ctPoints[ctPoints.length-1], 
 		[ ctPoints[ctPoints.length-1][0], ctPoints[ctPoints.length-1][1] + lengthCorn, ctPoints[ctPoints.length-1][2] ], 
 		[ ctPoints[0][0], ctPoints[0][1] + lengthCorn, ctPoints[0][2] ],
 		ctPoints[0]  ])([[0,1,2],[2,3,4]]);
+	*/
 
 	// Tappi laterali
 	var tappiLaterali = [];
 	tappiLaterali.push( this.creaTappoLaterale(ctPoints) );
 	tappiLaterali.push( this.creaTappoLaterale(PointUtils.traslaPunti(ctPoints, 1, lengthCorn)) );
 
-	return STRUCT([
-					this.creaFregio(lengthCorn, 1),
-					STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
-					tappoRetro,
-					MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
-				]);
+	var finalModel = STRUCT([
+						this.creaFregio(lengthCorn, 1),
+						STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
+						// tappoRetro,
+						MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
+					]);
+
+	return COLOR( ColoriProgetto.INTONACO_BORDI )( finalModel );
 };
 
 TimpanoFacciata.prototype.creaCornicioneAngolato = function(lengthCorn, angoloGradi) {
@@ -1516,20 +1523,24 @@ TimpanoFacciata.prototype.creaCornicioneAngolato = function(lengthCorn, angoloGr
 	// Tappi laterali
 	var tappiLaterali = [];
 	tappiLaterali.push( this.creaTappoLaterale(ctPoints) );
-	tappiLaterali.push( this.creaTappoLaterale( PointUtils.traslaPunti( PointUtils.traslaPunti(ctPoints, 1, componenteY), 2, componenteZ ) ) );
+	// tappiLaterali.push( this.creaTappoLaterale( PointUtils.traslaPunti( PointUtils.traslaPunti(ctPoints, 1, componenteY), 2, componenteZ ) ) );
 
 	// Tappo sul retro
+	/*
 	var tappoRetro = SIMPLICIAL_COMPLEX([ ctPoints[0], ctPoints[ctPoints.length-1], 
 		[ ctPoints[ctPoints.length-1][0], ctPoints[ctPoints.length-1][1] + componenteY, ctPoints[ctPoints.length-1][2] + componenteZ ], 
 		[ ctPoints[0][0], ctPoints[0][1] + componenteY, ctPoints[0][2] + componenteZ ],
 		ctPoints[0]  ])([[0,1,2],[2,3,4]]);
+	*/
 
-	return STRUCT([
-					R([1,2])(angoloRadianti)( this.creaFregio(lengthCorn, 2, -1) ),
-					STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
-					tappoRetro,
-					MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
-				]);
+	var finalModel = STRUCT([
+						R([1,2])(angoloRadianti)( this.creaFregio(lengthCorn, 2, -1) ),
+						STRUCT( CONS( AA(MAP)(tappiLaterali) )( CommonDomains.DIM2_DOMAIN_LOWRES ) ),
+						// tappoRetro,
+						MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES)
+					]);
+
+	return COLOR( ColoriProgetto.INTONACO_BORDI )( finalModel );
 };
 
 TimpanoFacciata.prototype.creaCornicioneRaccordo = function(angoloGradi) {
@@ -1556,7 +1567,9 @@ TimpanoFacciata.prototype.creaCornicioneRaccordo = function(angoloGradi) {
 	mapProfili.push( NUBS(S1)(1)([0,0,3,3])([profS,profC]) );
 	mapProfili.push( NUBS(S1)(1)([0,0,3,3])([profC,profD]) );
 
-	return STRUCT( CONS( AA(MAP)(mapProfili) )( CommonDomains.DIM2_DOMAIN_LOWRES ) );
+	var finalModel = STRUCT( CONS( AA(MAP)(mapProfili) )( CommonDomains.DIM2_DOMAIN_LOWRES ) );
+
+	return COLOR( ColoriProgetto.INTONACO_BORDI )( finalModel );
 };
 
 TimpanoFacciata.prototype.creaFregio = function(lengthCorn, startFregio, endFregio) {
@@ -1587,8 +1600,8 @@ TimpanoFacciata.prototype.creaTappoTriangolare = function(base, ipotenusa, altez
 
 	var tappoDelta = 10;
 
-	finalModel.push( SIMPLICIAL_COMPLEX([[0,0,0],[0,base/2,altezza],[0,base,0]])([[0,1,2]]) );
-	finalModel.push( T([1,2])([tappoDelta/2,this.hMaxPointsSotto])( CUBOID([0.99,base-(tappoDelta),2])  ) );
+	finalModel.push( COLOR( ColoriProgetto.INTONACO_BASE )( SIMPLICIAL_COMPLEX([[0,0,0],[0,base/2,altezza],[0,base,0]])([[0,1,2]]) ) );
+	finalModel.push( COLOR( ColoriProgetto.INTONACO_BORDI )( T([1,2])([tappoDelta/2,this.hMaxPointsSotto])( CUBOID([0.99,base-(tappoDelta),2]) ) ) );
 
 	return STRUCT(finalModel);
 };
@@ -1758,7 +1771,11 @@ FacciataLaterale.prototype.creaFacciataDestra = function() {
 	pareteLateraleRModel.push( T([0])([ CommonParetiMeasure.spessoreBordo ]) );
 	this.halfLength += larghezzaPareteFrontale+allineamentoPatio; // + CommonParetiMeasure.spessoreBordo;
 
-	pareteLateraleRModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
+	if ( PROJECT_DEBUGWALLCONNECTION == true ) {
+		pareteLateraleRModel.push( COLOR(ColoriProgetto.DEBUG)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
+	} else {
+		pareteLateraleRModel.push( S([0])([-1])( this.refPareti.getCornicioneCubico() ) );	
+	}
 
 	return STRUCT(pareteLateraleRModel);
 };
@@ -1799,10 +1816,12 @@ HalfWalls.prototype.creaFacciate = function() {
 // --------------------------
 
 function Roof() {
-
+	this.spessoreTimpano = 0;
+	this.deltaLatoTimpano = CommonParetiMeasure.spessoreBordo * 11; // 3.3
+	this.spessoreTappoTimpano = CommonParetiMeasure.spessoreBordo * 6; // 1.8
 };
 
-Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto) {
+Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano) {
 	var finalModel = [];
 
 	finalModel.push( T([0])([-halfX]) );
@@ -1817,14 +1836,37 @@ Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto) 
 	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSottoSinistra) );
 
 	var salitaSopraSinistra = SIMPLICIAL_COMPLEX([[0,2*halfY,0],[halfX-halfPatioX,halfY,altezzaTetto],[halfX,halfY,altezzaTetto],[halfX,2*halfY,0]])([[0,1,2],[2,3,0]]);
-	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSopraSinistra) );	
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaSopraSinistra) );
+
+	
+	var salitaTimpanoDavanti = SIMPLICIAL_COMPLEX([[halfX-halfPatioX-this.deltaLatoTimpano,this.spessoreTimpano,0],
+													[halfX,this.spessoreTimpano,altezzaTimpano],
+												[halfX,halfY,altezzaTimpano],[halfX-halfPatioX,halfY,0]])([[0,1,2],[2,3,0]]);
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaTimpanoDavanti) );
+
+	var tapposalitaTimpanoDavanti = SIMPLICIAL_COMPLEX([[halfX-halfPatioX-this.deltaLatoTimpano,this.spessoreTappoTimpano,0],
+													[halfX,this.spessoreTappoTimpano,altezzaTimpano],
+													[halfX,this.spessoreTappoTimpano,0]])([[0,1,2]]);
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)(tapposalitaTimpanoDavanti) ); 
+
+	var salitaTimpanoDietro = SIMPLICIAL_COMPLEX([[halfX-halfPatioX-this.deltaLatoTimpano,2*halfY-this.spessoreTimpano,0],
+												[halfX,2*halfY-this.spessoreTimpano,altezzaTimpano],
+												[halfX,halfY,altezzaTimpano],[halfX-halfPatioX,halfY,0]])([[0,1,2],[2,3,0]]);
+	finalModel.push( COLOR(ColoriProgetto.TETTO)(salitaTimpanoDietro) );
+
+	var tapposalitaTimpanoDietro = SIMPLICIAL_COMPLEX([[halfX-halfPatioX-this.deltaLatoTimpano,2*halfY-this.spessoreTappoTimpano,0],
+													[halfX,2*halfY-this.spessoreTappoTimpano,altezzaTimpano],
+													[halfX,2*halfY-this.spessoreTappoTimpano,0]])([[0,1,2]]);
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)(tapposalitaTimpanoDietro) ); 
 
 	return STRUCT(finalModel);
 };
 
-Roof.prototype.creaFullTetto = function(halfX, halfY, halfPatioX, altezzaTetto) {
+Roof.prototype.creaFullTetto = function(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano) {
+	altezzaTimpano = altezzaTimpano || altezzaTetto;
+
 	var finalModel = [];
-	var halfTetto = this.creaHalfTetto(halfX, halfY, halfPatioX, altezzaTetto);
+	var halfTetto = this.creaHalfTetto(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano);
 
 	finalModel.push( halfTetto );
 	finalModel.push( S([0])([-1])( halfTetto ) );
@@ -1849,8 +1891,10 @@ Progetto.prototype.fullWalls = function() {
 	var halfWall = this.refhalfBase.creaFacciate();
 
 	finalModel.push( halfWall );
-	finalModel.push( R([0,1])(PI) );
-	finalModel.push( halfWall );
+	if ( PROJECT_ONLYHALFWALL != true ) {
+		finalModel.push( R([0,1])(PI) );
+		finalModel.push( halfWall );		
+	}
 
 	return STRUCT(finalModel);
 };
@@ -1864,7 +1908,8 @@ Progetto.prototype.fullRoof = function() {
 	var deltaX = CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * 5*this.refhalfBase.refLaterale.refPareti.spessoreBordo;
 	// Lunghezza
 	var deltaY = CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * 2*this.refhalfBase.refLaterale.refPareti.spessoreBordo;
-	var deltaAltezza = 0; // 3
+	// Altezza tetto
+	var deltaAltezza = 1.3;
 
 	finalModel.push( T([2])([CommonParetiMeasure.altezzaPareteLunga + deltaZ]) );
 	finalModel.push( this.refTetto.creaFullTetto(this.refhalfBase.refFacciata.getHalfLengthNoDelta() + deltaX, 
@@ -1879,7 +1924,11 @@ Progetto.prototype.disegnaModello = function() {
 	var finalModel = [];
 
 	finalModel.push( this.fullWalls() );
-	finalModel.push( this.fullRoof() );
+
+	if (PROJECT_NOROOF != true) {
+		finalModel.push( this.fullRoof() );
+	}
+	
 
 	return STRUCT(finalModel);
 };
