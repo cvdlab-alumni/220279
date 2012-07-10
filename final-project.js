@@ -6,7 +6,10 @@ var PROJECT_3DCOLUMN = false;
 var PROJECT_NOBALCONCINI = false;
 var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
+var PROJECT_NOPLATFORM = false;
 var PROJECT_DEBUGWALLCONNECTION = false;
+// Don't use T/R/S in critical slow point but directly Model.x functions (decrease memory usage)
+var PROJECT_NOFUNCTIONALTRS = true;
 // Warning this may crash Three.js and/or Plasm
 var PROJECT_HIGHRESOLUTION = false;
 
@@ -58,6 +61,7 @@ ColoriProgetto.LEGNO_PORTA = [152/255, 118/255, 84/255];
 
 // Rosso Pompeiano (cit.)
 ColoriProgetto.TETTO = [210/255, 31/255, 27/255];
+ColoriProgetto.ERBA = [34/255, 139/255, 34/255];
 
 ColoriProgetto.DEBUG = [255/255, 0/255, 0/255];
 
@@ -453,7 +457,17 @@ Colonna.prototype.creaCapitello = function() {
 	var halfLeft = this.creaHalfCapitello();
 	var halfRight = S([0])([-1])(this.creaHalfCapitello());
 
-	return STRUCT([halfLeft, T([0])([29]), halfRight]);
+	var finalModel = [];
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( this.creaHalfCapitello() );
+		finalModel.push( (this.creaHalfCapitello().scale([0],[-1])).translate([0],[29]) );
+	} else {
+		finalModel.push( this.creaHalfCapitello() );
+		finalModel.push( T([0])([29]) );
+		finalModel.push( S([0])([-1])(this.creaHalfCapitello()) );
+	}
+
+	return STRUCT(finalModel);
 };
 
 Colonna.prototype.creaColonna = function() {
@@ -481,19 +495,33 @@ Colonna.prototype.creaColonna = function() {
 	var colonnaRotational = AA(ROTATIONAL_SURFACE)(curveColonna);
 	var colonnaSurfaces = CONS( AA(MAP)(colonnaRotational) )(CommonDomains.DIM2R_DOMAIN);
 	
-	// Genera superfici
-	var structSuperfici = T([2])([this.baseColonnaSpessore])( STRUCT(colonnaSurfaces) );
-	var baseQuadrata = T([0,1])([-(this.baseColonna/2),-(this.baseColonna/2)])(CUBOID([this.baseColonna,this.baseColonna,this.baseColonnaSpessore]));
-	var capitelloTop = T([0,1,2])([-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello])( R([1,2])(PI/2)( S([0,1,2])([this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])(this.creaCapitello()) ) );
 
-	// Modello finale orientato sulle x
-	// var rotazioneOrientante = function(a) { return a; };
-	var rotazioneOrientante = R([0,1])(PI);
-	var modReturn = rotazioneOrientante( STRUCT([
+	var modReturn = null;
+
+	if (PROJECT_NOFUNCTIONALTRS == true) {
+		// Genera superfici senza clone()
+		var structSuperfici = STRUCT(colonnaSurfaces).translate([2], [this.baseColonnaSpessore]);
+		var baseQuadrata = CUBOID([this.baseColonna,this.baseColonna,this.baseColonnaSpessore]).translate([0,1],[-(this.baseColonna/2),-(this.baseColonna/2)]);
+		var capitelloTop = ((this.creaCapitello().scale([0,1,2], [this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])).rotate([1,2], PI/2)).translate([0,1,2], [-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello])
+		// Modello finale orientato sulle x
+		modReturn = STRUCT([
 						COLOR(ColoriProgetto.INTONACO_BASE)(structSuperfici),
 						COLOR(ColoriProgetto.INTONACO_SCURO)(baseQuadrata),
 						COLOR(ColoriProgetto.INTONACO_BASE)(capitelloTop)
-						]) );
+						]).rotate([0,1], PI);
+	} else {
+		// Genera superfici
+		var structSuperfici = T([2])([this.baseColonnaSpessore])( STRUCT(colonnaSurfaces) );
+		var baseQuadrata = T([0,1])([-(this.baseColonna/2),-(this.baseColonna/2)])(CUBOID([this.baseColonna,this.baseColonna,this.baseColonnaSpessore]));
+		var capitelloTop = T([0,1,2])([-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello])( R([1,2])(PI/2)( S([0,1,2])([this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])(this.creaCapitello()) ) );
+		// Modello finale orientato sulle x
+		var rotazioneOrientante = R([0,1])(PI);
+		modReturn = rotazioneOrientante( STRUCT([
+						COLOR(ColoriProgetto.INTONACO_BASE)(structSuperfici),
+						COLOR(ColoriProgetto.INTONACO_SCURO)(baseQuadrata),
+						COLOR(ColoriProgetto.INTONACO_BASE)(capitelloTop)
+						]) );		
+	}
 
 	return modReturn;
 };
@@ -539,22 +567,30 @@ ParetiColonnato.prototype.creaParetePorta = function() {
 	var bordoH = 2 - deltaBordo;
 	var bordoV = bordoH;
 
+	//
+	var finalModel = [];
+	//
+
 	var modelloParete = STRUCT([ SIMPLEX_GRID( [[(larghezzaParete-frameInternoH)/2,-frameInternoH,(larghezzaParete-frameInternoH)/2],[spessoreParete],[altezzaParete]] ),
 						  		 SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreParete],[-frameInternoV,altezzaParete-frameInternoV]] )
 						]);
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete) );
 
 	var bordoPorta = STRUCT([	SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH-(bordoH*2))/2),bordoH,-frameInternoH,bordoH,-((larghezzaParete-frameInternoH-(bordoH*2))/2)],[spessoreBordo],[frameEsternoV,-(altezzaParete-frameEsternoV)]] ),
 								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreBordo],[-frameInternoV,bordoV,-(altezzaParete-frameInternoV-bordoV)]] )
 						]);
+	
+	var portaLegno = this.creaPorta(frameInternoH, frameInternoV);
 
-	var posBordoPorta = T([1])([-spessoreBordo])(bordoPorta);
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( bordoPorta.translate([1], [-spessoreBordo]) ) );
+		finalModel.push( portaLegno.translate([0,1], [(larghezzaParete-frameInternoH)/2,spessoreParete/2]) );
+	} else {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( T([1])([-spessoreBordo])(bordoPorta) ) );
+		finalModel.push( T([0,1])([(larghezzaParete-frameInternoH)/2,spessoreParete/2])( portaLegno ) );
+	}
 
-	var portaLegno = T([0,1])([(larghezzaParete-frameInternoH)/2,spessoreParete/2])( this.creaPorta(frameInternoH, frameInternoV) );
-
-	return STRUCT([ 
-			COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete), 
-			COLOR(ColoriProgetto.INTONACO_BORDI)(posBordoPorta), 
-			portaLegno ]);
+	return STRUCT(finalModel);
 };
 
 ParetiColonnato.prototype.creaPorta = function(frameInternoH, frameInternoV) {
@@ -623,24 +659,31 @@ ParetiColonnato.prototype.creaPareteFinestra = function() {
 	var bordoH = 2 - deltaBordo;
 	var bordoV = bordoH;
 
+	//
+	var finalModel = [];
+	//	
+
 	var modelloParete = STRUCT([ SIMPLEX_GRID( [[(larghezzaParete-frameInternoH)/2,-frameInternoH,(larghezzaParete-frameInternoH)/2],[spessoreParete],[altezzaParete]] ),
 						  		 SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreParete],[frameEsternoTV+bordoV,-frameInternoV,(altezzaParete-frameInternoV-frameEsternoTV-bordoV)]] )
 						]);
+
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete) );
 
 	var bordoFinestra = STRUCT([ SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH-(bordoH*2))/2),bordoH,-frameInternoH,bordoH,-((larghezzaParete-frameInternoH-(bordoH*2))/2)],[spessoreBordo],[-frameEsternoTV,frameEsternoV+bordoV,-(altezzaParete-frameEsternoTV-frameEsternoV-bordoV)]] ),
 								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreBordo],[-frameEsternoTV,bordoV,-frameInternoV,bordoV,-(altezzaParete-frameEsternoTV-(bordoV*2)-frameInternoV)]] )
 						]);
 
-	var posBordoFinestra = T([1])([-spessoreBordo])(bordoFinestra);
+	var finestraVetri = this.creaFinestra(frameInternoH, frameInternoV, conInferriata);
 
-	var finestraVetri = T([0,1,2])([(larghezzaParete-frameInternoH)/2,spessoreParete/2,frameEsternoTV+bordoV])( 
-							this.creaFinestra(frameInternoH, frameInternoV, conInferriata) 
-						);
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( bordoFinestra.translate([1], [-spessoreBordo]) ) );
+		finalModel.push( finestraVetri.translate([0,1,2], [(larghezzaParete-frameInternoH)/2,spessoreParete/2,frameEsternoTV+bordoV]) );
+	} else {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( T([1])([-spessoreBordo])(bordoFinestra) ) );
+		finalModel.push( T([0,1,2])([(larghezzaParete-frameInternoH)/2,spessoreParete/2,frameEsternoTV+bordoV])( finestraVetri ) );
+	}
 
-	return STRUCT([ 
-		COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete), 
-		COLOR(ColoriProgetto.INTONACO_BORDI)(posBordoFinestra), 
-		finestraVetri ]);
+	return STRUCT(finalModel);
 };
 
 ParetiColonnato.prototype.creaFinestra = function(frameInternoH, frameInternoV, conInferriata) {
@@ -722,22 +765,35 @@ ParetiColonnato.prototype.creaPareteLateralePorta = function() {
 	var bordoH = 2 - deltaBordo;
 	var bordoV = bordoH;
 
+	//
+	var finalModel = [];
+	//	
+
 	var modelloParete = STRUCT([ SIMPLEX_GRID( [[(larghezzaParete-frameInternoH)/2,-frameInternoH,(larghezzaParete-frameInternoH)/2],[spessoreParete],[altezzaParete]] ),
 						  		 SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreParete],[-frameInternoV,altezzaParete-frameInternoV]] )
 						]);
+
+	finalModel.push( COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete) );
 
 	var bordoPorta = STRUCT([	SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH-(bordoH*2))/2),bordoH,-frameInternoH,bordoH,-((larghezzaParete-frameInternoH-(bordoH*2))/2)],[spessoreBordo],[frameEsternoV,-(altezzaParete-frameEsternoV)]] ),
 								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreBordo],[-frameInternoV,bordoV,-(altezzaParete-frameInternoV-bordoV)]] )
 						]);
 
-	var posBordoPorta = T([1])([-spessoreBordo])(bordoPorta);
+	var portaLegno = this.creaPorta(frameInternoH, frameInternoV);
 
-	var portaLegno = T([0,1])([(larghezzaParete-frameInternoH)/2,spessoreParete/2])( this.creaPorta(frameInternoH, frameInternoV) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( bordoPorta.translate([1], [-spessoreBordo]) ) );
+		finalModel.push( portaLegno.translate([0,1], [(larghezzaParete-frameInternoH)/2,spessoreParete/2]) );
 
-	return T([0])([-larghezzaParete+spessoreParete])( STRUCT([ 
-			COLOR(ColoriProgetto.INTONACO_BASE)(modelloParete), 
-			COLOR(ColoriProgetto.INTONACO_BORDI)(posBordoPorta), 
-			portaLegno ]) );
+		finalModel = STRUCT(finalModel).translate([0], [-larghezzaParete+spessoreParete]);
+	} else {
+		finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)( T([1])([-spessoreBordo])(bordoPorta) ) );
+		finalModel.push( T([0,1])([(larghezzaParete-frameInternoH)/2,spessoreParete/2])( portaLegno ) );
+
+		finalModel = T([0])([-larghezzaParete+spessoreParete])( STRUCT(finalModel) );
+	}
+
+	return finalModel;
 };
 
 ParetiColonnato.prototype.creaParetePatio = function() {
@@ -833,13 +889,27 @@ CornicionePatio.prototype.creaCornicione = function(length, leftAngle, rightAngl
 	var resultModel = [];
 	resultModel.push( this.creaCornicioneRetto(length) );
 	if ( leftAngle == true ) {
-		resultModel.push( S([1])([-1])( this.creaCornicioneAngolo() ) );
+		if ( PROJECT_NOFUNCTIONALTRS == true ) {
+			resultModel.push( this.creaCornicioneAngolo().scale([1],[-1]) );
+		} else {
+			resultModel.push( S([1])([-1])( this.creaCornicioneAngolo() ) );
+		}
 	}
 	if ( rightAngle == true ) {
-		resultModel.push( T([1])([length])( this.creaCornicioneAngolo() ) );
+		if ( PROJECT_NOFUNCTIONALTRS == true ) {
+			resultModel.push( this.creaCornicioneAngolo().translate([1],[length]) );
+		} else {
+			resultModel.push( T([1])([length])( this.creaCornicioneAngolo() ) );
+		}
 	}
 
-	return R([0,1])(-PI/2)( STRUCT(resultModel) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		resultModel = STRUCT(resultModel).rotate([0,1], -PI/2);
+	} else {
+		resultModel = R([0,1])(-PI/2)( STRUCT(resultModel) );
+	}
+
+	return resultModel;
 };
 
 // --------------------------
@@ -856,6 +926,9 @@ function ModuliPareti() {
 	this.bordoV = this.bordoH;
 	// deltaPatio
 	this.deltaCornicione = 0.174;
+	//
+	this.altezzaBordoInferiore = (4/3)*this.bordoV;
+	this.deltaBordoInferiore = 1.4;
 };
 
 ModuliPareti.prototype.getCornicioneCubico = function(posCornicioneAlto) {
@@ -893,6 +966,7 @@ ModuliPareti.prototype.getCornicioneCubico = function(posCornicioneAlto) {
 	return COLOR(ColoriProgetto.INTONACO_BORDI)(
 							STRUCT([ 
 								T([1])([-spessoreBordo]),
+								T([0,1,2])([-(2/3)*spessoreBordo,-(2/3)*spessoreBordo,-this.altezzaBordoInferiore])( SIMPLEX_GRID( [[this.deltaBordoInferiore * CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * spessoreBordo],[this.deltaBordoInferiore * CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * spessoreBordo],[this.altezzaBordoInferiore]] ) ),
 								SIMPLEX_GRID( [[spessoreBordo],[spessoreBordo],[(4/3)*bordoV]] ),
 								SIMPLEX_GRID( [[spessoreBordo],[spessoreBordo],[-posCornicioneAlto,altezzaParete-posCornicioneAlto]] ),
 								T([0,1])([-(1/3)*spessoreBordo,-(1/3)*spessoreBordo]),
@@ -925,6 +999,7 @@ ModuliPareti.prototype.getCornicioni = function(larghezza, posCornicioneAlto) {
 	return COLOR(ColoriProgetto.INTONACO_BORDI)(
 							STRUCT([ 
 								T([1])([-spessoreBordo]),
+								T([1,2])([-(2/3)*spessoreBordo,-this.altezzaBordoInferiore])( SIMPLEX_GRID( [[larghezzaParete],[this.deltaBordoInferiore * CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio * spessoreBordo],[this.altezzaBordoInferiore]] ) ),
 								SIMPLEX_GRID( [[larghezzaParete],[spessoreBordo],[(4/3)*bordoV]] ),
 								SIMPLEX_GRID( [[larghezzaParete],[spessoreBordo],[-posCornicioneAlto,altezzaParete-posCornicioneAlto]] ),
 								T([1])([-(1/3)*spessoreBordo]),
@@ -1109,10 +1184,11 @@ ModuliPareti.prototype.creaFinestra_InferriataDiagonale = ParetiColonnato.protot
 
 // -----------------------------
 
-function Patio() {
+function Patio(refModuloPareti) {
 	this.refColonna = new Colonna();
 	this.refParetiColonnato = new ParetiColonnato();
 	this.refCornicionePatio = new CornicionePatio();
+	this.refPareti = refModuloPareti;
 	// References
 	this.startPatio = this.refColonna.baseColonna * (2/3);
 	this.profonditaPatio = this.startPatio + 25;
@@ -1130,21 +1206,18 @@ function Patio() {
 Patio.prototype.creaColonnato = function(fullColonnato) {
 	fullColonnato = fullColonnato || false;
 
-	var colonnaStandard = this.refColonna.creaColonna().translate([1],[1]);
-	var standardTrans = T([0])([this.refParetiColonnato.larghezzaParete]);
+	var colonnaStandard = this.refColonna.creaColonna();
 
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		colonnaStandard = colonnaStandard.translate([1],[1]);
+	} else {
+		colonnaStandard = T([1])([1])( colonnaStandard );
+	}
+	
 	var modelloColonnato = colonnaStandard;
 	if ( fullColonnato != false ) {
-		/*
-		modelloColonnato = STRUCT([
-								colonnaStandard, standardTrans,
-								colonnaStandard, standardTrans,
-								colonnaStandard, standardTrans,
-								colonnaStandard, standardTrans,
-								colonnaStandard, standardTrans,
-								colonnaStandard
-							]);	*/
-		modelloColonnato = STRUCT([
+		if ( PROJECT_NOFUNCTIONALTRS == true ) {
+			modelloColonnato = STRUCT([
 								colonnaStandard,
 								colonnaStandard.clone().translate([0],[this.refParetiColonnato.larghezzaParete * 1]),
 								colonnaStandard.clone().translate([0],[this.refParetiColonnato.larghezzaParete * 2]),
@@ -1152,6 +1225,18 @@ Patio.prototype.creaColonnato = function(fullColonnato) {
 								colonnaStandard.clone().translate([0],[this.refParetiColonnato.larghezzaParete * 4]),
 								colonnaStandard.clone().translate([0],[this.refParetiColonnato.larghezzaParete * 5])
 							]);
+		} else {
+			var standardTrans = T([0])([this.refParetiColonnato.larghezzaParete]);
+
+			modelloColonnato = STRUCT([
+								colonnaStandard, standardTrans,
+								colonnaStandard, standardTrans,
+								colonnaStandard, standardTrans,
+								colonnaStandard, standardTrans,
+								colonnaStandard, standardTrans,
+								colonnaStandard
+							]);
+		};
 	}
 
 	return modelloColonnato;
@@ -1177,8 +1262,34 @@ Patio.prototype.creaSoffitto = function() {
 	var lunghezzaPatioY = this.lunghezzaPatioY;
 	//
 	var finalModel = [];
-	finalModel.push( T([2])([this.altezzaSupCornicione - this.altezzaCornicione])( CUBOID([this.lunghezzaPatioX, this.profonditaPatio, 0.5]) ) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( CUBOID([this.lunghezzaPatioX, this.profonditaPatio, 0.5]).translate([2], [this.altezzaSupCornicione - this.altezzaCornicione]) );
+	} else {
+		finalModel.push( T([2])([this.altezzaSupCornicione - this.altezzaCornicione])( CUBOID([this.lunghezzaPatioX, this.profonditaPatio, 0.5]) ) );	
+	}
+	
 	finalModel.push( CUBOID([this.lunghezzaPatioX, this.lunghezzaPatioY, this.refCornicionePatio.altezzaMax]) );
+	//
+	return COLOR(ColoriProgetto.INTONACO_BASE)( STRUCT(finalModel) );
+};
+
+Patio.prototype.creaPavimento = function() {
+	var lunghezzaPatioX = this.lunghezzaPatioX;
+	var lunghezzaPatioY = this.lunghezzaPatioY;
+	var spessorePatio = this.refPareti.altezzaBordoInferiore;
+	//
+	var finalModel = [];
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( 
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, this.profonditaPatio + this.refColonna.baseColonna, spessorePatio]).translate(
+							[0,1,2], [-this.refColonna.baseColonna/2, -this.refColonna.baseColonna/2, -spessorePatio]) 
+					);
+	} else {
+		finalModel.push( T([0,1,2])([-this.refColonna.baseColonna/2, -this.refColonna.baseColonna/2, -spessorePatio])(
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, this.profonditaPatio + this.refColonna.baseColonna, spessorePatio])
+					) 
+				);
+	}
 	//
 	return COLOR(ColoriProgetto.INTONACO_BASE)( STRUCT(finalModel) );
 };
@@ -1186,18 +1297,39 @@ Patio.prototype.creaSoffitto = function() {
 Patio.prototype.creaPatio = function(fullColonnato) {
 	var modelloFinale = [];
 
-	// modelloParetiPatio
-	modelloFinale.push( T([1])([this.profonditaPatio])( this.refParetiColonnato.creaParetePatio() ) );
-	// modelloColonnato
-	if ( PROJECT_NOCOLUMNS != true ) {
-		modelloFinale.push( this.creaColonnato(fullColonnato) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		// modelloParetiPatio
+		modelloFinale.push( this.refParetiColonnato.creaParetePatio().translate([1], [this.profonditaPatio]) );
+		// modelloColonnato
+		if ( PROJECT_NOCOLUMNS != true ) {
+			modelloFinale.push( this.creaColonnato(fullColonnato) );
+		}
+		// modelloCornicione
+		modelloFinale.push( this.creaFullCornicione().translate([2],[this.altezzaCornicione]) );
+		// modelloSoffitto
+		modelloFinale.push( this.creaSoffitto().translate([2], [this.altezzaCornicione]) );
+		// modelloPavimento
+		modelloFinale.push( this.creaPavimento() );
+		//
+		modelloFinale = STRUCT(modelloFinale).translate([0], [-this.centroPatioX]);
+	} else {
+		// modelloParetiPatio
+		modelloFinale.push( T([1])([this.profonditaPatio])( this.refParetiColonnato.creaParetePatio() ) );
+		// modelloColonnato
+		if ( PROJECT_NOCOLUMNS != true ) {
+			modelloFinale.push( this.creaColonnato(fullColonnato) );
+		}
+		// modelloCornicione
+		modelloFinale.push( T([2])([this.altezzaCornicione])( this.creaFullCornicione() ) );
+		// modelloSoffitto
+		modelloFinale.push( T([2])([this.altezzaCornicione])( this.creaSoffitto() ) );
+		// modelloPavimento
+		modelloFinale.push( this.creaPavimento() );
+		//
+		modelloFinale = T([0])([-this.centroPatioX])( STRUCT(modelloFinale) );
 	}
-	// modelloCornicione
-	modelloFinale.push( T([2])([this.altezzaCornicione])( this.creaFullCornicione() ) );
-	// modelloSoffitto
-	modelloFinale.push( T([2])([this.altezzaCornicione])( this.creaSoffitto() ) );
 
-	return T([0])([-this.centroPatioX])( STRUCT(modelloFinale) );
+	return modelloFinale;
 };
 
 // --------------------------
@@ -1646,7 +1778,13 @@ TimpanoFacciata.prototype.creaTimpano = function(base, ipotenusa, altezza) {
 	resultModel.push( T([1,2])([halfBase,altezza - altezzaDelta])( this.creaCornicioneRaccordo(angoloGradi - angoloDelta) ) );
 	resultModel.push( this.creaTappoTriangolare(base, ipotenusa, altezza) );
 
-	return R([0,1])(-PI/2)( T([1])([-halfBase])( STRUCT(resultModel) ) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		resultModel = (STRUCT(resultModel).translate([1],[-halfBase])).rotate([0,1],-PI/2);
+	} else {
+		resultModel = R([0,1])(-PI/2)( T([1])([-halfBase])( STRUCT(resultModel) ) );
+	}
+
+	return resultModel;
 };
 
 // --------------------------
@@ -1674,8 +1812,8 @@ TimpanoFull.prototype.creaTimpano = function() {
 // --------------------------
 
 function FacciataCentrata() {
-	this.refPatio = new Patio(); // centroPatioX
 	this.refPareti = new ModuliPareti();
+	this.refPatio = new Patio(this.refPareti); // centroPatioX
 	this.refBalconcino = new PareteBalconcino(this.refPatio);
 	this.refFullTimpano = new TimpanoFull();
 	//
@@ -1733,8 +1871,15 @@ FacciataCentrata.prototype.creaFacciata = function() {
 	finalModel.push( this.refPatio.creaPatio(this.fullColonnato) );
 	finalModel.push( pareteLateraleR );
 	finalModel.push( pareteLateraleL );
-	finalModel.push( T([2])([this.refPatio.altezzaSupCornicione])( this.refBalconcino.creaParete() ) );
-	finalModel.push( T([1,2])([-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione])( this.refFullTimpano.creaTimpano() ));
+
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( this.refBalconcino.creaParete().translate([2],[this.refPatio.altezzaSupCornicione]) );
+		finalModel.push( this.refFullTimpano.creaTimpano().translate([1,2], [-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione]) );
+	} else {
+		finalModel.push( T([2])([this.refPatio.altezzaSupCornicione])( this.refBalconcino.creaParete() ) );
+		finalModel.push( T([1,2])([-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione])( this.refFullTimpano.creaTimpano() ) );
+	}
+	
 
 	return STRUCT(finalModel);
 };
@@ -1830,11 +1975,19 @@ HalfWalls.prototype.creaFacciate = function() {
 	var pareteLaterale = this.refLaterale.creaFacciata();
 
 	finalModel.push( pareteFrontale );
-	finalModel.push( R([0,1])(PI/2) );
-	finalModel.push( T([0,1])([this.refLaterale.getHalfLength(), -this.refFacciata.getHalfLength()]) );
-	finalModel.push( pareteLaterale );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( (pareteLaterale.translate([0,1], [this.refLaterale.getHalfLength(), -this.refFacciata.getHalfLength()])).rotate([0,1],PI/2) );
 
-	return T([1])([-this.refLaterale.getHalfLength()])( STRUCT(finalModel) );
+		finalModel = STRUCT(finalModel).translate([1], [-this.refLaterale.getHalfLength()]);
+	} else {
+		finalModel.push( R([0,1])(PI/2) );
+		finalModel.push( T([0,1])([this.refLaterale.getHalfLength(), -this.refFacciata.getHalfLength()]) );
+		finalModel.push( pareteLaterale );		
+
+		finalModel = T([1])([-this.refLaterale.getHalfLength()])( STRUCT(finalModel) );
+	}
+
+	return finalModel;
 };
 
 // --------------------------
@@ -1895,7 +2048,13 @@ Roof.prototype.creaFullTetto = function(halfX, halfY, halfPatioX, altezzaTetto, 
 	finalModel.push( halfTetto );
 	finalModel.push( S([0])([-1])( halfTetto ) );
 
-	return T([1])([-halfY])( STRUCT(finalModel) );
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel = STRUCT(finalModel).translate([1],[-halfY]);
+	} else {
+		finalModel = T([1])([-halfY])( STRUCT(finalModel) );
+	}
+
+	return finalModel;
 };
 
 // --------------------------
@@ -1935,59 +2094,73 @@ Progetto.prototype.fullRoof = function() {
 	// Altezza tetto
 	var deltaAltezza = 1.3;
 
-	finalModel.push( T([2])([CommonParetiMeasure.altezzaPareteLunga + deltaZ]) );
-	finalModel.push( this.refTetto.creaFullTetto(this.refhalfBase.refFacciata.getHalfLengthNoDelta() + deltaX, 
+	var tettoModel = this.refTetto.creaFullTetto(this.refhalfBase.refFacciata.getHalfLengthNoDelta() + deltaX, 
 												 this.refhalfBase.refLaterale.getHalfLengthNoDelta() + deltaY, 
 												this.refhalfBase.refFacciata.refPatio.centroPatioX, 
-												this.refhalfBase.refFacciata.refFullTimpano.altezzaTimpano + deltaAltezza ) );
+												this.refhalfBase.refFacciata.refFullTimpano.altezzaTimpano + deltaAltezza );
+
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( tettoModel.translate([2], [CommonParetiMeasure.altezzaPareteLunga + deltaZ]) );
+	} else {
+		finalModel.push( T([2])([CommonParetiMeasure.altezzaPareteLunga + deltaZ]) );
+		finalModel.push( tettoModel );
+	}
 
 	return STRUCT(finalModel);
 };
+
+Progetto.prototype.creaPiattaforme = function() {
+	var spessorePiattaforma = 0.1;
+	var fattoreScala = 1.2;
+	var pX = this.refhalfBase.refFacciata.getHalfLength() * 2 * fattoreScala;
+	var pY = this.refhalfBase.refLaterale.getHalfLength() * 2 * fattoreScala;
+	var tZ = this.refFacciata.refPareti.altezzaBordoInferiore;
+	//
+	var peX = this.refhalfBase.refFacciata.getHalfLength() * 2 * fattoreScala * 1.1;
+	var peY = this.refhalfBase.refLaterale.getHalfLength() * 2 * fattoreScala * 1.1;
+	var teZ = spessorePiattaforma * 10;	
+	//
+	// 
+	var modelloPiattaforma = CUBOID([pX, pY, spessorePiattaforma]);
+	var modelloErba = CUBOID([peX, peY, teZ]);
+
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		modelloPiattaforma = modelloPiattaforma.translate([0,1,2],[-(pX/2),-(pY/2),-tZ]);
+		modelloErba = modelloErba.translate([0,1,2],[-(peX/2),-(peY/2),-(tZ+teZ)]);
+	} else {
+		modelloPiattaforma = T([0,1,2])([-(pX/2),-(pY/2),-tZ])(modelloPiattaforma);
+		modelloErba = T([0,1,2])([-(peX/2),-(peY/2),-(tZ+teZ)])(modelloErba);
+	}
+
+	return STRUCT([
+					COLOR(ColoriProgetto.INTONACO_BORDI)(modelloPiattaforma),
+					COLOR(ColoriProgetto.ERBA)(modelloErba),
+				]);
+};
+
 
 Progetto.prototype.disegnaModello = function() {
 	var finalModel = [];
 
 	finalModel.push( this.fullWalls() );
 
+	if ( PROJECT_NOPLATFORM != true ) {
+		finalModel.push( this.creaPiattaforme() )
+	}
+
 	if (PROJECT_NOROOF != true) {
 		finalModel.push( this.fullRoof() );
 	}
-	
 
 	return STRUCT(finalModel);
 };
 
 // --------------------------
 
-var createProfileNew = function(p) {
-	// var tf = new TimpanoFull();
-	// DRAW( tf.creaTimpano() );
-
-	// DRAW(p.refFacciata.refBalconcino.creaPareteLateraleBalconcino());
-	// DRAW(p.refFacciata.refPareti.pareteAlta(p.refFacciata.refBalconcino.larghezzaPareteLaterale));
-
-	p.refhalfBase.creaFacciate();
-	var tt = new Roof();
-	DRAW( tt.creaFullTetto(p.refFacciata.getHalfLength(), p.refLaterale.getHalfLength(), 
-							p.refFacciata.refPatio.centroPatioX, p.refFacciata.refFullTimpano.altezzaTimpano ) );
-};
-
-
-var runTest = function() {
+var runProject = function() {
 	var p = new Progetto();
-	// DRAW( p.refFacciata.creaFacciata() );
-	// DRAW( p.refLaterale.creaFacciata() );
-	// DRAW( p.refhalfBase.creaFacciate() );
-	// DRAW( p.fullWalls() );
-	DRAW( p.disegnaModello() );
-
-	// var c = new Colonna();
-	// DRAW(c.creaHalfCapitello());
-
-	// var c = new ColonnaBalconcino();
-	// DRAW( c.creaColonna() );
-
-	// createProfileNew(p);
+	return p.disegnaModello();
 };
 
-runTest();
+var scmodel = runProject();
+DRAW(scmodel);
