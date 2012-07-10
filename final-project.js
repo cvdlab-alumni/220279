@@ -1998,6 +1998,65 @@ function Roof() {
 	this.spessoreTappoTimpano = CommonParetiMeasure.spessoreBordo * 6; // 1.8
 };
 
+Roof.prototype.creaComignolo = function() {
+	var baseMeasure = {"x": 3.6, "y": 3.6, "z": 3.6};
+	var baseSupMeasure = {"x": 3.6, "y": 3.6, "z": 2};
+	var coronaSpessore = 0.2;
+	var larghezzaSup = 5;
+	var altezzaTri = 2.14;
+	//
+
+	//
+	var finalModel = [];
+
+	var modelloCubo = COLOR( ColoriProgetto.INTONACO_BASE )( CUBOID([baseSupMeasure.x, baseSupMeasure.y, baseSupMeasure.z]) );
+	var modelloBase = COLOR( ColoriProgetto.INTONACO_BASE )( CUBOID([baseMeasure.x, baseMeasure.y, baseMeasure.z * 2]) );
+	var modelloCorona = COLOR(ColoriProgetto.INTONACO_BORDI)(
+							STRUCT([
+								SIMPLEX_GRID([[coronaSpessore + baseMeasure.x + coronaSpessore],[coronaSpessore, -baseMeasure.y, coronaSpessore],[-(2*baseMeasure.z - coronaSpessore), coronaSpessore]]),
+								SIMPLEX_GRID([[coronaSpessore, -baseMeasure.x, coronaSpessore],[-coronaSpessore, baseMeasure.y, -coronaSpessore],[-(2*baseMeasure.z - coronaSpessore), coronaSpessore]])
+							])
+						);
+	//
+	var spuntoneTrap = (larghezzaSup - baseMeasure.z)/2;
+	var trapezioSin = COLOR( ColoriProgetto.INTONACO_BASE )( STRUCT([
+								SIMPLICIAL_COMPLEX([[0,0,0],[0,0,baseSupMeasure.z],[-spuntoneTrap,0,baseSupMeasure.z]])([[0,1,2]]),
+								SIMPLICIAL_COMPLEX([[0,baseSupMeasure.y,0],[0,baseSupMeasure.y,baseSupMeasure.z],[-spuntoneTrap,baseSupMeasure.y,baseSupMeasure.z]])([[0,1,2]]),
+								SIMPLICIAL_COMPLEX([[0,baseSupMeasure.y,baseSupMeasure.z],[-spuntoneTrap,baseSupMeasure.y,baseSupMeasure.z],[-spuntoneTrap,0,baseSupMeasure.z],[0,0,baseSupMeasure.z]])([[0,1,2],[2,3,0]]),
+								SIMPLICIAL_COMPLEX([[0,0,0],[0,baseSupMeasure.y,0],[-spuntoneTrap,baseSupMeasure.y,baseSupMeasure.z],[-spuntoneTrap,0,baseSupMeasure.z]])([[0,1,2],[2,3,0]])
+							]) );
+	var trapezioDes = T([0])([baseMeasure.x])(S([0])([-1])(trapezioSin));
+	//
+	var triFrontale = COLOR( ColoriProgetto.INTONACO_BASE )(
+							SIMPLICIAL_COMPLEX([[-spuntoneTrap,0,0],[baseMeasure.x/2,0,altezzaTri],[spuntoneTrap+baseMeasure.x,0,0]])([[0,1,2]])
+					  );
+	var triDietro = COLOR( ColoriProgetto.INTONACO_BASE )(
+							SIMPLICIAL_COMPLEX([[-spuntoneTrap,baseSupMeasure.y,0],[baseMeasure.x/2,baseSupMeasure.y,altezzaTri],[spuntoneTrap+baseMeasure.x,baseSupMeasure.y,0]])([[0,1,2]])
+					  );
+	//
+	var tettoSinistra = COLOR(ColoriProgetto.TETTO)(
+							SIMPLICIAL_COMPLEX([[-spuntoneTrap,baseSupMeasure.y+coronaSpessore,0],[baseMeasure.x/2,baseSupMeasure.y+coronaSpessore,altezzaTri],[baseMeasure.x/2,-coronaSpessore,altezzaTri],[-spuntoneTrap,-coronaSpessore,0]])([[0,1,2],[2,3,0]])
+						);
+	var tettoDestra = COLOR(ColoriProgetto.TETTO)(
+							SIMPLICIAL_COMPLEX([[spuntoneTrap+baseMeasure.x,baseSupMeasure.y+coronaSpessore,0],[baseMeasure.x/2,baseSupMeasure.y+coronaSpessore,altezzaTri],[baseMeasure.x/2,-coronaSpessore,altezzaTri],[spuntoneTrap+baseMeasure.x,-coronaSpessore,0]])([[0,1,2],[2,3,0]])
+						);	
+
+	finalModel.push( T([0,1,2])([-(baseMeasure.x/2), -(baseMeasure.y/2), (7/4)*baseMeasure.z]) );
+	finalModel.push( modelloBase );
+	finalModel.push( T([0,1])([-coronaSpessore,-coronaSpessore])( modelloCorona ) );
+	finalModel.push( T([2])([baseMeasure.z * 2]) );
+	finalModel.push( modelloCubo );
+	finalModel.push( trapezioSin );
+	finalModel.push( trapezioDes );
+	finalModel.push( T([2])([baseSupMeasure.z]) );
+	finalModel.push( triFrontale );
+	finalModel.push( triDietro );
+	finalModel.push( tettoSinistra );
+	finalModel.push( tettoDestra );
+
+	return STRUCT(finalModel);
+};
+
 Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano) {
 	var finalModel = [];
 
@@ -2036,6 +2095,15 @@ Roof.prototype.creaHalfTetto = function(halfX, halfY, halfPatioX, altezzaTetto, 
 													[halfX,2*halfY-this.spessoreTappoTimpano,0]])([[0,1,2]]);
 	finalModel.push( COLOR(ColoriProgetto.INTONACO_BORDI)(tapposalitaTimpanoDietro) ); 
 
+	// Comignolo
+	var comignolo = this.creaComignolo();
+	var comignoloPos = {"x": (halfX-halfPatioX)*(2/3), "y": halfY*(2/3), "z": Math.sin( Math.atan2(altezzaTetto,halfX) ) * ((halfX-halfPatioX)*(2/3)) };
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel.push( comignolo.translate([0,1,2], [comignoloPos.x, comignoloPos.y, comignoloPos.z]) );
+	} else {
+		finalModel.push( T([0,1,2])([comignoloPos.x, comignoloPos.y , comignoloPos.z])(comignolo) );
+	}	
+
 	return STRUCT(finalModel);
 };
 
@@ -2063,7 +2131,7 @@ function Progetto() {
 	this.refhalfBase = new HalfWalls();
 	this.refTetto = new Roof();
 	//
-	// Debug to be removed
+	// Helpful references
 	this.refFacciata = this.refhalfBase.refFacciata;
 	this.refLaterale = this.refhalfBase.refLaterale;
 };
@@ -2138,7 +2206,6 @@ Progetto.prototype.creaPiattaforme = function() {
 				]);
 };
 
-
 Progetto.prototype.disegnaModello = function() {
 	var finalModel = [];
 
@@ -2157,6 +2224,7 @@ Progetto.prototype.disegnaModello = function() {
 
 // --------------------------
 
+
 var runProject = function() {
 	var p = new Progetto();
 	return p.disegnaModello();
@@ -2164,3 +2232,11 @@ var runProject = function() {
 
 var scmodel = runProject();
 DRAW(scmodel);
+
+
+// var runTest = function() {
+// 	var rf = new Roof();
+// 	DRAW( rf.creaComignolo() );
+// };
+
+// runTest();
