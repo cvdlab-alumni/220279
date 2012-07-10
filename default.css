@@ -63,12 +63,25 @@ cite {
 
 img.floatLeft { 
     float: left; 
-    margin-right: 10px; 
+    margin-right: 20px; 
 }
 
 img.floatRight { 
     float: right; 
-    margin-left: 10px; 
+    margin-left: 20px; 
+}
+
+img.resizeMicro { 
+    width: 10%; 
+    height: 10%; 
+}
+
+img.resizeMicroW { 
+    width: 10%; 
+}
+
+img.resizeMicroH { 
+    height: 10%; 
 }
 
 img.resizeTiny { 

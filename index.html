@@ -19,6 +19,7 @@
 	        closeSpeed  : 150,			
 			openEffect  : 'elastic',
 		    closeEffect : 'elastic',
+		    titlePosition : 'inside',
         	beforeShow: function () {
 	            /* Disable right click */
 	            $.fancybox.wrap.bind("contextmenu", function (e) {
@@ -68,6 +69,7 @@
 			    closeSpeed  : 150,
 				openEffect  : 'elastic',
 				closeEffect : 'elastic',
+				titlePosition : 'inside',
 		        beforeShow: function () {
 			        /* Disable right click */
 			        $.fancybox.wrap.bind("contextmenu", function (e) {
@@ -104,7 +106,7 @@
 
 		<h1>Introduction<a name="Introduzione"></a></h1>
 		<p>Villa Valmarana (also known as Valmarana Scagnolari Zen) is a Renaissance villa in the province of Vicenza. It is one of the many villas designed by Andrea Palladio and described in his famous book collection "I Quattro Libri dell'Architettura" (The Four Books of Architecture) published in 1570.</p>
-		<a href="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" class="fancybox"><img class="floatLeft resizeTinyW" title="Villa Valmarana original project" src="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" /></a>
+		<a href="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" class="fancybox" title="Villa Valmarana original project"><img class="floatLeft resizeTinyW" src="docimg/Villa_Valmarana_Lisiera_Quattro_Libri.jpg" /></a>
 		<p>The villa, as of today, is quite different from the one that Palladio designed for Gianfrancesco Valmarana, around 1563: as can be seen from the image (on the right) it shows a structure with double-storey loggias, enclosed by small towers on both fronts. The project, as intended, was never completed because the build works were interrupted in 1566 by the death of Gianfrancesco and were probably concluded by his nephew Leonardo (the heir of the family) probably using less funds. The second storey of loggias was never constructed and the middle section was terminated with some sort of attic.</p>
 		<p>Unfortunately the villa was almost destroyed by bombardment during World War II and then recently reconstructed with some modifications.<a class="external" target="_blank" href="http://www.cisapalladio.org/veneto/scheda.php?sezione=4&architettura=34&lingua=e"></a></p>
 		<p>The villa, after the latest reconstruction, is quite different from what Palladio had in mind: while the ground floor is mostly the same in respect of the original project, the top (and last floor) is totally different. In additon some extra structure (that is partially in ruins) has been added on the back of the villa (a wing facing north) and a wall divides the front area, with the garden, from the back one that is inaccessible to the public.</p>
@@ -113,7 +115,7 @@
 		<div class="divider"></div>
 
 		<h1>General description of the project<a name="Architettura"></a></h1>
-		<a href="docimg/Alto_20m_doc.png" class="fancybox"><img class="floatRight resizeHalfW" title="Aerial photo" src="docimg/Alto_20m_doc.png" /></a>
+		<a href="docimg/Alto_20m_doc.png" class="fancybox" title="Aerial photo of the villa as of today"><img class="floatRight resizeHalfW" src="docimg/Alto_20m_doc.png" /></a>
 		<p>Reproducing the villa in 3D, whetever as of today or as of the original project, is quite impossible: lack of documentation makes improbable the definition of a coherent structure to implement and show. Infact the original project consist of only two projections (front and basement) and of the today structure there is an abundance of photo shoots of the front area of the villa (that is publicy accessible) but none of the other parts (that are inaccessible to the public).</p>
 		<p>The first step was to gather all the possible documentation to make an informed decision on how to develop the whole project: after gathering a pletora of images I decided to build a <i>hybrid</i> between the original Palladio project and the villa as it is today. It was decided to proceed as follow:
 		<ul>
@@ -140,7 +142,18 @@
 		</p>
 
 		<h2>Facade<a name="Facade"></a></h2>
-		<p>The facade ...</p>
+		<p>
+		<a class="fancybox" rel="group1" href="docimg/Frontale_Liscia.jpg" title="Frontal photo of the facade"><img class="floatLeft resizeMicro" src="docimg/Frontale_Liscia.jpg" /></a>
+		<a class="fancybox" rel="group1" href="docimg/Frontale_Layer.jpg" title="Frontal photo of the facade with decomposition of components (same color means same component)"><img class="floatLeft resizeMicro" src="docimg/Frontale_Layer.jpg"/></a> 
+		The facade is the more complex part of the whole villa. As seen in the images here, is composed by a lot of elements, some to be considered macro that are composed again of other elements that can be reused (completely or partially) inside the other macro elements. The three macro elements of the Facade are:
+		<ul>
+			<li>Patio</li>
+			<li>Gable</li>
+			<li>Side walls</li>
+		</ul>
+		
+
+		</p>
 		<h2>Side Wall<a name="SideWall"></a></h2>
 		<h2>Roof<a name="Roof"></a></h2>
 
@@ -153,6 +166,7 @@
 		<p>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</p>
 
 		<h2>Author sketches and notes</h2>
+		<p>Below there is a collection of hand-written notes and sketches made during the various phases of the project.</p>
 		<!--Gallery sketches -->
 		<div id="gallery" class="ad-gallery">
 		  <div class="ad-image-wrapper">
@@ -163,60 +177,44 @@
 			  <div class="ad-thumbs">
 				  <ul class="ad-thumb-list">
 				      <li>
-					  <a href="docimg/notes/image01.jpg">
-						  <img src="docimg/notes/thumbs/th_image01.jpg" 
-							  alt="Measurements of walls"
-							    />
-					  </a>
+						  <a href="docimg/notes/image01.jpg">
+							  <img src="docimg/notes/thumbs/th_image01.jpg" alt="Measurements of walls" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image02.jpg">
-						  <img src="docimg/notes/thumbs/th_image02.jpg" 
-							  alt="Doors pattern"
-							    />
-					  </a>
+						  <a href="docimg/notes/image02.jpg">
+							  <img src="docimg/notes/thumbs/th_image02.jpg" alt="Doors pattern" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image03.jpg">
-						  <img src="docimg/notes/thumbs/th_image03.jpg" 
-							  alt="Balcony columns"
-							    />
-					  </a>
+						  <a href="docimg/notes/image03.jpg">
+							  <img src="docimg/notes/thumbs/th_image03.jpg" alt="Balcony columns" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image04.jpg">
-						  <img src="docimg/notes/thumbs/th_image04.jpg" 
-							  alt="Patio cornice"
-							    />
-					  </a>
+						  <a href="docimg/notes/image04.jpg">
+							  <img src="docimg/notes/thumbs/th_image04.jpg" alt="Patio cornice" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image05.jpg">
-						  <img src="docimg/notes/thumbs/th_image05.jpg" 
-							  alt="Gable schematics"
-							    />
-					  </a>
+						  <a href="docimg/notes/image05.jpg">
+							  <img src="docimg/notes/thumbs/th_image05.jpg" alt="Gable schematics" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image06.jpg">
-						  <img src="docimg/notes/thumbs/th_image06.jpg" 
-							  alt="Doors, windows, balcony"
-							    />
-					  </a>
+						  <a href="docimg/notes/image06.jpg">
+							  <img src="docimg/notes/thumbs/th_image06.jpg" alt="Doors, windows, balcony" />
+						  </a>
 				      </li>         
 				      <li>
-					  <a href="docimg/notes/image07.jpg">
-						  <img src="docimg/notes/thumbs/th_image07.jpg" 
-							  alt="Column and spirals"
-							    />
-					  </a>
+						  <a href="docimg/notes/image07.jpg">
+							  <img src="docimg/notes/thumbs/th_image07.jpg" alt="Column and spirals" />
+						  </a>
 				      </li>
 				      <li>
-					  <a href="docimg/notes/image08.jpg">
-						  <img src="docimg/notes/thumbs/th_image08.jpg" 
-							  alt="Roof and chimney"
-							    />
-					  </a>
+						  <a href="docimg/notes/image08.jpg">
+							  <img src="docimg/notes/thumbs/th_image08.jpg" alt="Roof and chimney" />
+						  </a>
 				      </li>
 				  </ul>
 			  </div>
