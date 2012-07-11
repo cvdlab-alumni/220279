@@ -32,16 +32,16 @@ body {
 p,cite,code,ul {
 	margin-bottom: 1.2em;
 }
-h1 {
-	font: normal 1.2em "Lucida Sans Unicode",sans-serif;
-}
+
 ul {
 	margin: 12px 0;
 }
+
 li {
 	list-style: url(img/li.gif);
 	margin-left: 18px;
 }
+
 code {
 	background: url(img/bgcode.gif);
 	border: 1px dotted #AAA;
@@ -59,68 +59,6 @@ cite {
 	color: #663;
 	font: normal 1.1em "Lucida Sans Unicode",serif;
 	padding-left: 28px;
-}
-
-img.floatLeft { 
-    float: left; 
-    margin-right: 20px; 
-}
-
-img.floatRight { 
-    float: right; 
-    margin-left: 20px; 
-}
-
-img.resizeMicro { 
-    width: 10%; 
-    height: 10%; 
-}
-
-img.resizeMicroW { 
-    width: 10%; 
-}
-
-img.resizeMicroH { 
-    height: 10%; 
-}
-
-img.resizeTiny { 
-    width: 30%; 
-    height: 30%; 
-}
-
-img.resizeTinyW { 
-    width: 30%; 
-}
-
-img.resizeTinyH { 
-    height: 30%; 
-}
-
-img.resizeHalf { 
-    width: 50%; 
-    height: 50%; 
-}
-
-img.resizeHalfW { 
-    width: 50%; 
-}
-
-img.resizeHalfH { 
-    height: 50%; 
-}
-
-img.resizeLarge { 
-    width: 60%; 
-    height: 60%; 
-}
-
-img.resizeLargeW { 
-    width: 60%; 
-}
-
-img.resizeLargeH { 
-    height: 60%; 
 }
 
 /* misc */
@@ -180,12 +118,20 @@ img.resizeLargeH {
 .content {
 	padding: 18px 0;
 }
+
 .content h1 {
+	color: #553;
+	font-size: 1.6em;
+	margin-bottom: 4px;
+}
+
+.content h2 {
 	color: #553;
 	font-size: 1.4em;
 	margin-bottom: 4px;
 }
-.content h2 {
+
+.content h3 {
 	color: #553;
 	font-size: 1.2em;
 	margin-bottom: 4px;
@@ -200,4 +146,81 @@ img.resizeLargeH {
 }
 .footer a {
 	color: #664;
+}
+
+/* img resize */
+
+img.floatLeft { 
+    float: left; 
+    margin-right: 20px; 
+}
+
+img.floatRight { 
+    float: right; 
+    margin-left: 20px; 
+}
+
+img.resizeMicro { 
+    width: 10%; 
+    height: 10%; 
+}
+
+img.resizeMicroW { 
+    width: 10%; 
+}
+
+img.resizeMicroH { 
+    height: 10%; 
+}
+
+img.resizeMilli { 
+    width: 20%; 
+    height: 20%; 
+}
+
+img.resizeMilliW { 
+    width: 20%; 
+}
+
+img.resizeMilliH { 
+    height: 20%; 
+}
+
+img.resizeTiny { 
+    width: 30%; 
+    height: 30%; 
+}
+
+img.resizeTinyW { 
+    width: 30%; 
+}
+
+img.resizeTinyH { 
+    height: 30%; 
+}
+
+img.resizeHalf { 
+    width: 50%; 
+    height: 50%; 
+}
+
+img.resizeHalfW { 
+    width: 50%; 
+}
+
+img.resizeHalfH { 
+    height: 50%; 
+}
+
+img.resizeLarge { 
+    width: 60%; 
+    height: 60%; 
+}
+
+img.resizeLargeW { 
+    width: 60%; 
+}
+
+img.resizeLargeH { 
+    height: 60%; 
 }
