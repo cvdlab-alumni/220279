@@ -6,6 +6,7 @@ var PROJECT_3DCOLUMN = false;
 var PROJECT_NOBALCONCINI = false;
 var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
+var PROJECT_NOGABLE = false;
 var PROJECT_NOPLATFORM = false;
 var PROJECT_DEBUGWALLCONNECTION = false;
 // Don't use T/R/S in critical slow point but directly Model.x functions (decrease memory usage)
@@ -1284,11 +1285,27 @@ Patio.prototype.creaPavimento = function() {
 						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, this.profonditaPatio + this.refColonna.baseColonna, spessorePatio]).translate(
 							[0,1,2], [-this.refColonna.baseColonna/2, -this.refColonna.baseColonna/2, -spessorePatio]) 
 					);
+		finalModel.push( 
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, spessorePatio, (2/3)*spessorePatio]).translate(
+							[0,1,2], [-this.refColonna.baseColonna/2, -((this.refColonna.baseColonna/2)+spessorePatio), -spessorePatio]) 
+					);
+		finalModel.push( 
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, spessorePatio, (1/3)*spessorePatio]).translate(
+							[0,1,2], [-this.refColonna.baseColonna/2, -((this.refColonna.baseColonna/2)+(2*spessorePatio)), -spessorePatio]) 
+					);				
 	} else {
 		finalModel.push( T([0,1,2])([-this.refColonna.baseColonna/2, -this.refColonna.baseColonna/2, -spessorePatio])(
 						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, this.profonditaPatio + this.refColonna.baseColonna, spessorePatio])
 					) 
 				);
+		finalModel.push( T([0,1,2])([-this.refColonna.baseColonna/2, -((this.refColonna.baseColonna/2)+spessorePatio), -spessorePatio])(
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, spessorePatio, (2/3)*spessorePatio])
+					) 
+				);
+		finalModel.push( T([0,1,2])([-this.refColonna.baseColonna/2, -((this.refColonna.baseColonna/2)+(2*spessorePatio)), -spessorePatio])(
+						CUBOID([this.lunghezzaPatioX + this.refColonna.baseColonna, spessorePatio, (1/3)*spessorePatio])
+					) 
+				);			
 	}
 	//
 	return COLOR(ColoriProgetto.INTONACO_BASE)( STRUCT(finalModel) );
@@ -1874,10 +1891,14 @@ FacciataCentrata.prototype.creaFacciata = function() {
 
 	if ( PROJECT_NOFUNCTIONALTRS == true ) {
 		finalModel.push( this.refBalconcino.creaParete().translate([2],[this.refPatio.altezzaSupCornicione]) );
-		finalModel.push( this.refFullTimpano.creaTimpano().translate([1,2], [-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione]) );
+		if ( PROJECT_NOGABLE != true ) {
+			finalModel.push( this.refFullTimpano.creaTimpano().translate([1,2], [-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione]) );
+		}
 	} else {
 		finalModel.push( T([2])([this.refPatio.altezzaSupCornicione])( this.refBalconcino.creaParete() ) );
-		finalModel.push( T([1,2])([-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione])( this.refFullTimpano.creaTimpano() ) );
+		if ( PROJECT_NOGABLE != true ) {
+			finalModel.push( T([1,2])([-CommonParetiMeasure.cornicioneSuperiore_SpessoreRatio*CommonParetiMeasure.spessoreBordo, this.refBalconcino.altezzaParete + this.refPatio.altezzaSupCornicione])( this.refFullTimpano.creaTimpano() ) );
+		}
 	}
 	
 
