@@ -113,6 +113,9 @@ cite {
 	color: #FFF;
 	background-position: left bottom;
 }
+.navigation a img {
+	vertical-align:middle;
+}
 
 /* content */
 .content {
