@@ -2309,6 +2309,12 @@ Progetto.prototype.disegnaModello = function() {
 
 // --------------------------
 
+var centerProject = function() {
+	var cameraControls = p.controls.controls;
+	var boundingRadius = p.scene.getBoundingRadius();
+
+	cameraControls.placeCamera(new THREE.Vector3(1.1*boundingRadius, -1.1*boundingRadius, 0.2*boundingRadius), new THREE.Vector3(), new THREE.Vector3(0,0,1));
+}
 
 var runProject = function() {
 	var p = new Progetto();
@@ -2318,10 +2324,7 @@ var runProject = function() {
 var scmodel = runProject();
 DRAW(scmodel);
 
-
-// var runTest = function() {
-// 	var rf = new Roof();
-// 	DRAW( rf.creaComignolo() );
-// };
-
-// runTest();
+// Center project on document ready
+$(function () {
+	centerProject();
+});
