@@ -12,6 +12,8 @@
 	<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 	<script type="text/javascript" src="js/source/jquery.fancybox.pack.js?v=2.0.6"></script>
 	<script type="text/javascript" src="galleryLib/jquery.ad-gallery.min.js"></script>
+	<script type="text/javascript" src="js/jush-1.11.0/jush.js"></script>
+	<script type="text/javascript" src="js/jush-1.11.0/jush-api.js"></script>
 	<script type="text/javascript">
 	$(function() {
 		$(".fancybox").fancybox({
@@ -78,6 +80,10 @@
 		        }				    
 		    });
 		});
+
+		// Syntax highlight
+		jush.style('js/jush-1.11.0/jush.css');
+		jush.highlight_tag('code');
 	});
 	</script>
 </head>
@@ -168,7 +174,7 @@
 		</p>
 		<p>
 		The patio is the entrance of the villa (in the original project it was replicated in the north side too) and it is composed by a platform on which 6 columns are placed at evenly spaced position. Inside the patio there is the main door with 2 barred windows (diagonal bars) on each side of the main door. The side walls closing the patio on the right and on the left, contains a door (like the main one but tinier).<br />
-		The columns are inspired from the ionic order style without the well known 24 flutes: a stylobate separate the column from the basement then we have a base, a shaft and a capital.<br />
+		The columns are inspired from the ionic order style without the well known 24 flutes: a stylobate separate the column from the basement then we have a base, the column itself and a capital.<br />
 		Over the columns we have a typical ionic architrave that represent the separation between the ground floor and the first floor: the windows that are directly over the patio are uniquely styled with a tiny balcony made by fancy square-ish balusters.
 		</p>
 		<a name="Facade-Pediment"></a>
@@ -199,8 +205,8 @@
 		The right-most (or left-most) part of the side walls are the beginning of an half square structure (like a turret) that ends on the side walls of the villa. <br />
 		</p>
 
-		<a name="SideWall">
-		<h2>Side Wall</a></h2>
+		<a name="SideWall"></a>
+		<h2>Side Wall</h2>
 		<p>
 		<a class="fancybox" rel="group-SideWalls" href="docimg/SideWall_Detail0.jpg" title="Right side wall"><img class="floatLeft resizeMicroW" src="docimg/SideWall_Detail0.jpg" /></a>
 		<a class="fancybox" rel="group-SideWalls" href="docimg/SideWall_Detail1.jpg" title="Right side wall"><img class="floatLeft resizeMicroH" src="docimg/SideWall_Detail1.jpg" /></a>
@@ -212,8 +218,8 @@
 		Since a full frontal photo without dark areas of the side wall, the original project was used as reference to complete the structure.
 		</p>
 
-		<a name="Roof">
-		<h2>Roof</a></h2>
+		<a name="Roof"></a>
+		<h2>Roof</h2>
 		<p>
 		<a class="fancybox" rel="group-Roof" href="docimg/Tetto_Detail0.jpg" title="Roof with statues and chimney"><img class="floatLeft resizeMicroW" src="docimg/Tetto_Detail0.jpg" /></a>
 		<a class="fancybox" rel="group-Roof" href="docimg/Tetto_Detail1.jpg" title="Roof with statues and chimneys"><img class="floatLeft resizeMicroW" src="docimg/Tetto_Detail1.jpg" /></a>
@@ -234,6 +240,85 @@
 		<p>
 		<a class="fancybox" href="img/goto.png" title="Not so good practice at work :)"><img class="floatRight resizeHalfW" src="img/goto.png" /></a>			
 		Implementation of the project try to follow best practices of both Javascript and Plasm language: a functional approach where possible, reusing of components and modularized code that tries to be easily understandable. Every real world object has a counterpart in the code, this helped the re-usability and many optimizations (controlled by global switches) were implemented to permit the display of the model with different level of complexity and to help during the development phases.
+		</p>
+		<h2>Generic helpful objects</h2>
+		<p>
+		Besides representation of real objects, inside the project there are 3 objects containing useful functions:
+		<ul>
+			<li><b>PointUtils</b><br />
+				containing T/S/R working for array of points (example below)
+				<code class="jush-js">PointUtils.ruotaPunti = function(pointList, angolo, asse) {
+    if (asse === 0) {
+      var alfa = angolo;
+      return pointList.map( function(pt) { 
+		return [ pt[0], pt[1]*COS(alfa) + (-1)*pt[2]*SIN(alfa), pt[1]*SIN(alfa) + pt[2]*COS(alfa) ];
+      });
+    } else if (asse === 1) {
+      var beta = angolo;
+      return pointList.map( function(pt) { 
+		return [ pt[0]*COS(beta) + pt[2]*SIN(beta), pt[1], (-1)*pt[0]*SIN(beta) + pt[2]*COS(beta) ];
+      });
+    } else if (asse === 2) {
+      var gamma = angolo;
+      return pointList.map( function(pt) { 
+		return [ pt[0]*COS(gamma) + (-1)*pt[1]*SIN(gamma), pt[0]*SIN(gamma) + pt[1]*COS(gamma), pt[2] ];
+      });
+    }
+	    
+    return pointList;
+};
+				</code>
+			</li>
+			<li><b>CurveUtils</b><br />
+				containing functions to draw all curve types (example below)
+				<code class="jush-js">CurveUtils.drawCurveDebug = function(mapping, controlPoints) {
+	// punti di controllo
+	var listaDfacce = [];
+	controlPoints.forEach( function(v,i) { listaDfacce.push([i]); } );
+	DRAW( COLOR([0.1,0.6,0.2])( SIMPLICIAL_COMPLEX(controlPoints)(listaDfacce) ) );
+
+	// curva
+	var curve = MAP(mapping)(CommonDomains.DIM1_DOMAIN);
+	DRAW( COLOR([0,0.5,0.5])( curve ) );
+};
+
+CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
+	debug = debug || false;
+	var nubMap = NUBS(S0)(degree)(CurveUtils.generateS0Knots(cPoints.length, degree))(cPoints);
+		
+	if ( debug == true ) {
+		CurveUtils.drawCurveDebug(nubMap, cPoints);
+	}
+		
+	return nubMap;
+};
+				</code>
+			</li>
+			<li><b>CommonDomains</b><br />
+				containing singleton domains reused in the whole projects
+			</li>
+		</p>
+		<h2>Column</h2>
+		<p>
+			The column was implemented following the decomposition using <i class="plasm">cuboid</i> for the base, various <i class="plasm">nubs</i> curve profiles for the column and a more complex combination for the capital.
+			<h3>Capital</h3>
+			Although a ionic capital spiral is inspired by a nautilus shell and thus created using logarithmic equations, I decide to use the Archimedes's spiral that wield much more better looking results.
+			An Archimedean spiral is defined, in polar coordinates <i class="formula">(r,&#952;)</i>, by the equation <i class="formula">r = a + b&#952;</i>, with real numbers "a" and "b": changing the parameter "a" will turn the spiral, while "b" controls the distance between successive turnings <a class="external" target="_blank" href="http://en.wikipedia.org/wiki/Archimedean_spiral"></a>. It can be easily converted in a javascript snippet to generate control points for a <i class="plasm">nubs</i> curve profile:
+			<code class="jush-js">Colonna.prototype.curvaCapitello_Controls = function(raggioMax) {
+	raggioMax = raggioMax || 1;
+	var controlPoints = [];
+	
+	var i = 0;
+	var angolo = PI/2;
+
+	for (i = 0; i < 13; i++) {
+		controlPoints.push( [raggioMax * ( COS(i*angolo) + i*SIN(i*angolo)  ), raggioMax * ( SIN(i*angolo) - i*COS(i*angolo)  ), 0] );
+	}
+	
+	return controlPoints;
+};
+			</code>
+
 		</p>
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
@@ -272,12 +357,12 @@
 				      </li>
 				      <li>
 						  <a href="docimg/notes/image04.jpg">
-							  <img src="docimg/notes/thumbs/th_image04.jpg" alt="Patio cornice" />
+							  <img src="docimg/notes/thumbs/th_image04.jpg" alt="Patio cornice/architrave" />
 						  </a>
 				      </li>
 				      <li>
 						  <a href="docimg/notes/image05.jpg">
-							  <img src="docimg/notes/thumbs/th_image05.jpg" alt="Gable schematics" />
+							  <img src="docimg/notes/thumbs/th_image05.jpg" alt="Tympanum schematics" />
 						  </a>
 				      </li>
 				      <li>
@@ -287,7 +372,7 @@
 				      </li>         
 				      <li>
 						  <a href="docimg/notes/image07.jpg">
-							  <img src="docimg/notes/thumbs/th_image07.jpg" alt="Column and spirals" />
+							  <img src="docimg/notes/thumbs/th_image07.jpg" alt="Column and capital" />
 						  </a>
 				      </li>
 				      <li>
@@ -313,6 +398,8 @@
 		Thanks to <a href="https://github.com/" target="_blank">GitHub</a> for the repository and webpage hosting.
 		<br />
 		Thanks to <a href="http://xkcd.com/" target="_blank">xkcd</a> for the comic inside this page. 
+		<br />
+		This page is powered by <a href="http://jquery.com/" target="_blank">jQuery</a>, <a href="http://coffeescripter.com/code/ad-gallery/" target="_blank">jQuery.AD-Gallery</a>, <a href="http://fancybox.net/" target="_blank">Fancybox</a> and <a href="http://jush.sourceforge.net/" target="_blank">Jush</a>.
 	</div>
 
 </div>

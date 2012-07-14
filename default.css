@@ -51,6 +51,8 @@ code {
 	margin-bottom: 12px;
 	padding: 8px 10px;
 	white-space: pre;
+	height: 100px;
+	overflow-y: scroll;
 }
 
 cite {
@@ -138,6 +140,20 @@ cite {
 	color: #553;
 	font-size: 1.2em;
 	margin-bottom: 4px;
+}
+
+.content i.plasm {
+	color: #453;
+	font-size: 18px;
+	font-family:"Times New Roman", Times, sans-serif;
+	font-variant: small-caps;
+}
+
+.content i.formula {
+	color: #453;
+	font-size: 18px;
+	font-family:"Times New Roman", Times, sans-serif;
+	font-variant: bold;
 }
 
 /* footer */
