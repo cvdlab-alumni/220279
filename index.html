@@ -318,7 +318,17 @@ CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
 	return controlPoints;
 };
 			</code>
-
+			The double spiral has been created using two concentric <i class="plasm">nubs</i> and then using <i class="plasm">cylindrical_surface</i>  ... 
+			<code class="jush-js">var profonditaCapitelloSolidoExt = CYLINDRICAL_SURFACE(curvaExt)([0,0,zCapitello]);
+		var profonditaCapitelloSolidoInt = CYLINDRICAL_SURFACE(curvaInt)([0,0,zCapitello]);
+		// Tappo a cylindrical surface
+		var chiusuraSpirali = this.creaCapitello_TappoSpiraliLowRes(zCapitello, scalaSpiraleGrossa, scalaSpiralePiccola);
+		// Genera il tutto
+		profonditaCapitelloSolido = STRUCT([ MAP( profonditaCapitelloSolidoExt )( CommonDomains.DIM2_DOMAIN ),
+											 MAP( profonditaCapitelloSolidoInt )( CommonDomains.DIM2_DOMAIN ),
+											 chiusuraSpirali
+										   ]);
+			</code>
 		</p>
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
