@@ -47,7 +47,8 @@ if (PROJECT_HIGHRESOLUTION == false) {
 // =================================================================================
 
 var ColoriProgetto = function() {};
-ColoriProgetto.INTONACO_BASE = [247/255, 247/255, 247/255];
+// ColoriProgetto.INTONACO_BASE = [247/255, 247/255, 247/255];
+ColoriProgetto.INTONACO_BASE = [253/255, 253/255, 253/255];
 ColoriProgetto.INTONACO_SCURO = [210/255, 210/255, 210/255];
 ColoriProgetto.INTONACO_BORDI = [215/255, 215/255, 215/255];
 
@@ -155,9 +156,6 @@ CurveUtils.drawCurveDebug = function(mapping, controlPoints) {
 	var listaDfacce = [];
 	controlPoints.forEach( function(v,i) { listaDfacce.push([i]); } );
 	DRAW( COLOR([0.1,0.6,0.2])( SIMPLICIAL_COMPLEX(controlPoints)(listaDfacce) ) );
-
-	// polyline che unisce punti di controllo
-	// DRAW( COLOR([0.5,0.2,0.7])( POLYLINE(controlPoints) ) );
 
 	// curva
 	var curve = MAP(mapping)(CommonDomains.DIM1_DOMAIN);
@@ -1372,7 +1370,7 @@ Patio.prototype.creaPavimento = function() {
 				);			
 	}
 	//
-	return COLOR(ColoriProgetto.INTONACO_BASE)( STRUCT(finalModel) );
+	return COLOR(ColoriProgetto.INTONACO_SCURO)( STRUCT(finalModel) );
 };
 
 Patio.prototype.creaPatio = function(fullColonnato) {
@@ -2310,11 +2308,12 @@ Progetto.prototype.disegnaModello = function() {
 // --------------------------
 
 var centerProject = function() {
+	// p is the Plasm global viewer
 	var cameraControls = p.controls.controls;
 	var boundingRadius = p.scene.getBoundingRadius();
 
 	cameraControls.placeCamera(new THREE.Vector3(1.1*boundingRadius, -1.1*boundingRadius, 0.2*boundingRadius), new THREE.Vector3(), new THREE.Vector3(0,0,1));
-}
+};
 
 var runProject = function() {
 	var p = new Progetto();
