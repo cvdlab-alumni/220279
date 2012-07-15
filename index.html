@@ -238,7 +238,7 @@
 		<a name="Implementation"></a>
 		<h1>Implementation</h1>
 		<p>
-		<a class="fancybox" href="img/goto.png"><img class="floatRight resizeHalfW" src="img/goto.png" /></a>			
+		<a class="fancybox" href="img/comic_xkcd_goto.png"><img class="floatRight resizeHalfW" src="img/comic_xkcd_goto.png" /></a>			
 		Implementation of the project try to follow best practices of both Javascript and Plasm language: a functional approach where possible, reusing of components and modularized code that tries to be easily understandable. Every real world object has a counterpart in the code, this helped the re-usability and many optimizations (controlled by global switches) were implemented to permit the display of the model with different level of complexity and to help during the development phases.
 		</p>
 		<h2>Generic helpful objects</h2>
@@ -398,8 +398,8 @@ CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
 	return MAP(mapProfileCornicione)(CommonDomains.DIM2_DOMAIN_LOWRES);	
 };</code>
 		<h3>Balcony and balusters</h3>
-		The first floor right above the patio is made by six windows with an unique balcony formed by square-ish balusters: while the generation of the walls containing the windows used the same parametrized funztion used for the patio walls, the balusters creation and dsiplacement required a custom function similar to the window one.
-		Every single baluster is essantially a <i class="plasm">profileprod_surface</i> between two first degree <i class="plasm">nubs</i> profiles where the profiles control point can be scaled at will to generate a baluster with the right width and height.
+		The first floor right above the patio is made by six windows with an unique balcony formed by square-ish balusters: while the generation of the walls containing the windows used the same parametrized function used for the patio walls, the balusters creation and displacement required a custom function similar to the window one.
+		Every single baluster is essentially a <i class="plasm">profileprod_surface</i> between two first degree <i class="plasm">nubs</i> profiles where the profiles control point can be scaled at will to generate a baluster with the right width and height.
 		<code class="jush-js">ColonnaBalconcino.prototype.creaColonna = function(scaleFactorV, scaleFactorH) {
 	scaleFactorV = scaleFactorV || 1;
 	scaleFactorH = scaleFactorH || 1;
@@ -429,8 +429,8 @@ CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
 		</p>
 		<h2>Pediment</h2>
 		<p>
-		The pediment creation object is a paramentric one that, getting as input the lenght of each sides of the triangle and its height, is able to generate, using basic trigonometry, a full structure.<br />
-		The 3 cornices surrounding the tympanum (that is a triangular <i class="plasm">simplicial_complex</i>) are generated with the same procedure employed in the architrave object: a first degree <i class="plasm">nubs</i> profile in combination with <i class="plasm">cylindrical_surface</i>; the gutta in the diagonal cornices are generated parametrically by a function (they're cubic altough in the architrave of the Doric order they're cone-shaped projection used for water-repelling).<br />
+		The pediment creation object is a parametric one that, getting as input the lenght of each sides of the triangle and its height, is able to generate, using basic trigonometry, a full structure.<br />
+		The 3 cornices surrounding the tympanum (that is a triangular <i class="plasm">simplicial_complex</i>) are generated with the same procedure employed in the architrave object: a first degree <i class="plasm">nubs</i> profile in combination with <i class="plasm">cylindrical_surface</i>; the gutta in the diagonal cornices are generated parametrically by a function (they're cubic although in the architrave of the Doric order they're cone-shaped projection used for water-repelling).<br />
 		The connection between the two diagonal cornices is made using the usual cloning, scaling and roto-translation of the profiles into the creation of a <i class="plasm">nubs</i> surface.
 		<code class="jush-js">TimpanoFacciata.prototype.creaCornicioneAngolato = function(lengthCorn, angoloGradi) {
 	angoloGradi = angoloGradi || this.angoloDefault;
@@ -463,14 +463,206 @@ CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
 	return COLOR( ColoriProgetto.INTONACO_BORDI )( finalModel );
 };</code>
 		</p>
+		<h2>Walls</h2>
+		<p>
+			All the walls are generated using an object that takes width as parameter and then displaced in a <i class="plasm">struct</i> that is usually symmetrical in respect of some axes so with the usage of a rotation or a scaling the rest of a bigger wall or of the villa itself is generated easily (because of its symmetrical properties in the original design) (some examples below).
+			<code class="jush-js">ModuliPareti.prototype.pareteAltaFinestraGrossa = function() {
+	var spessoreParete = this.spessoreParete;
+	var spessoreBordo = this.spessoreBordo;
+	var larghezzaParete = this.larghezzaParete;
+	var altezzaParete = this.altezzaParete;
+	//
+	var deltaBordo = this.deltaBordo;
+	//
+	var frameInternoH = 5;
+	var frameInternoV = 10;
+	var frameEsternoH = 7 - deltaBordo;
+	var frameEsternoV = 12 - deltaBordo;	
+	var frameInternoHB = 6.5;
+	var frameInternoVB = 13.5;
+	var frameEsternoHB = 8.5 - deltaBordo;
+	var frameEsternoVB = 15.5 - deltaBordo;
+	var frameEsternoTV1 = 3 + deltaBordo;
+	var frameEsternoTV2 = 37.5 + deltaBordo;
+	//
+	var bordoH = this.bordoH;
+	var bordoV = this.bordoV;
+	//
+
+	var modelloParete = COLOR(ColoriProgetto.INTONACO_BASE)(
+							STRUCT([ 
+									// Grosso
+									SIMPLEX_GRID( [[(larghezzaParete-frameInternoHB)/2,-frameInternoHB,(larghezzaParete-frameInternoHB)/2],[spessoreParete],[frameEsternoTV2]] ),
+						  			SIMPLEX_GRID( [[-((larghezzaParete-frameInternoHB)/2),frameInternoHB,-((larghezzaParete-frameInternoHB)/2)],[spessoreParete],
+						  			 	[frameEsternoTV1+bordoV,-frameInternoVB,frameEsternoTV2-frameEsternoTV1-frameInternoVB]] ) ,
+						  			// Piccolo
+						  			SIMPLEX_GRID( [[(larghezzaParete-frameInternoH)/2,-frameInternoH,(larghezzaParete-frameInternoH)/2],[spessoreParete],[-frameEsternoTV2, altezzaParete-frameEsternoTV2]] ),
+						  			SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreParete],
+						  			 	[-frameEsternoTV2,bordoV,-frameInternoV,altezzaParete-frameInternoV-frameEsternoTV2-bordoV]] )
+							])
+						);
+
+	var bordoFinestra = COLOR(ColoriProgetto.INTONACO_BORDI)(
+							STRUCT([ 	
+								// Grosso
+								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoHB-(bordoH*2))/2),bordoH,-frameInternoHB,bordoH,-((larghezzaParete-frameInternoHB-(bordoH*2))/2)],[spessoreBordo],[-frameEsternoTV1,frameEsternoVB+bordoV]] ),
+								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoHB)/2),frameInternoHB,-((larghezzaParete-frameInternoHB)/2)],[spessoreBordo],[-frameEsternoTV1,bordoV,-frameInternoVB,bordoV]] ),
+								// Piccolo
+								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH-(bordoH*2))/2),bordoH,-frameInternoH,bordoH,-((larghezzaParete-frameInternoH-(bordoH*2))/2)],[spessoreBordo],[-frameEsternoTV2,frameEsternoV+bordoV,-(altezzaParete-frameEsternoTV2-frameEsternoV-bordoV)]] ),
+								SIMPLEX_GRID( [[-((larghezzaParete-frameInternoH)/2),frameInternoH,-((larghezzaParete-frameInternoH)/2)],[spessoreBordo],[-frameEsternoTV2,bordoV,-frameInternoV,bordoV,-(altezzaParete-frameEsternoTV2-(bordoV*2)-frameInternoV)]] )
+							])
+						);
+
+	var posCornicioneAlto = frameEsternoTV2 + frameEsternoV + bordoV + 3*deltaBordo - this.deltaCornicione;
+	var cornicioni = this.getCornicioni(larghezzaParete, posCornicioneAlto);
+
+	var posBordoFinestra = T([1])([-spessoreBordo])(bordoFinestra);
+
+	var finestraVetriInf = T([0,1,2])([(larghezzaParete-frameInternoHB)/2,spessoreParete/2,frameEsternoTV1+bordoV])( this.creaFinestraGrossa(frameInternoHB, frameInternoVB, true) );
+	var finestraVetriSup = T([0,1,2])([(larghezzaParete-frameInternoH)/2,spessoreParete/2,frameEsternoTV1+bordoV])( this.creaFinestraPiccola(frameInternoH, frameInternoV) );
+
+	// finalModel
+	var finalModel = [];
+	finalModel.push( modelloParete );
+	finalModel.push( cornicioni );
+	finalModel.push( posBordoFinestra );
+	finalModel.push( finestraVetriInf );
+	finalModel.push( T([2])([frameEsternoTV2-frameEsternoTV1]) );
+	finalModel.push( finestraVetriSup );
+
+	return  STRUCT(finalModel);
+};</code> 
+			<code class="jush-js">FacciataLaterale.prototype.creaFacciataDestra = function() {
+	var larghezzaPareteFrontale = CommonParetiMeasure.torretta.pareteSenzaFinestra;
+	var profonditaLaterale = CommonParetiMeasure.torretta.profonditaLaterale;
+	var allineamentoPatio = 1;
+	//
+	var pareteLateraleRModel = [];
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale]) );
+	this.halfLength += larghezzaPareteFrontale;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraGrossa()  );
+	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale]) );
+	this.halfLength += larghezzaPareteFrontale;
+
+	pareteLateraleRModel.push( R([0,1])(-PI/2)( this.refPareti.pareteAlta(profonditaLaterale) ) );
+	pareteLateraleRModel.push( T([1])([-profonditaLaterale]) );
+	pareteLateraleRModel.push( T([0])([-this.refPareti.spessoreBordo])( this.refPareti.getCornicioneCubico() ) );
+	pareteLateraleRModel.push( this.refPareti.getCornicioni(this.refPareti.spessoreParete) );
+	pareteLateraleRModel.push( T([0])([this.refPareti.spessoreParete]) );
+	this.halfLength += this.refPareti.spessoreParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale+allineamentoPatio) );	
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale+allineamentoPatio]) );
+	this.halfLength += larghezzaPareteFrontale+allineamentoPatio;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAltaFinestraPiccola()  );
+	pareteLateraleRModel.push( T([0])([this.refPareti.larghezzaParete]) );
+	this.halfLength += this.refPareti.larghezzaParete;
+
+	pareteLateraleRModel.push( this.refPareti.pareteAlta(larghezzaPareteFrontale+allineamentoPatio) );
+	pareteLateraleRModel.push( T([0])([larghezzaPareteFrontale+allineamentoPatio]) );
+	pareteLateraleRModel.push( T([0])([ CommonParetiMeasure.spessoreBordo ]) );
+	this.halfLength += larghezzaPareteFrontale+allineamentoPatio; // + CommonParetiMeasure.spessoreBordo;
+
+	if ( PROJECT_DEBUGWALLCONNECTION == true ) {
+		pareteLateraleRModel.push( COLOR(ColoriProgetto.DEBUG)( S([0])([-1])( this.refPareti.getCornicioneCubico() ) ) );
+	} else {
+		pareteLateraleRModel.push( S([0])([-1])( this.refPareti.getCornicioneCubico() ) );	
+	}
+
+	return STRUCT(pareteLateraleRModel);
+};
+
+FacciataLaterale.prototype.creaFacciata = function() {
+	var finalModel = [];
+
+	var pareteLateraleR = this.creaFacciataDestra();
+	var pareteLateraleL = S([0])([-1])( pareteLateraleR );
+
+	finalModel.push( pareteLateraleR );
+	finalModel.push( pareteLateraleL );
+
+	return STRUCT(finalModel);
+};
+</code>
+		</p>
+		<h2>Roof</h2>
+		<p>
+		Due to the symmetry, only half of the roof was designed using trigonometry and various <i class="plasm">simplical_complex</i>. The only extra object that was designed separately was the chimney that is placed into the half roof designed so it can be easily replicated.
+		<code class="jush-js">Roof.prototype.creaFullTetto = function(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano) {
+	altezzaTimpano = altezzaTimpano || altezzaTetto;
+
+	var finalModel = [];
+	var halfTetto = this.creaHalfTetto(halfX, halfY, halfPatioX, altezzaTetto, altezzaTimpano);
+
+	finalModel.push( halfTetto );
+	finalModel.push( S([0])([-1])( halfTetto ) );
+
+	if ( PROJECT_NOFUNCTIONALTRS == true ) {
+		finalModel = STRUCT(finalModel).translate([1],[-halfY]);
+	} else {
+		finalModel = T([1])([-halfY])( STRUCT(finalModel) );
+	}
+
+	return finalModel;
+};</code>
+		</p>
+		<h2>Final assembly</h2>
+		<p>
+			Since every object was designed to be hierarchically called from its "father", the final assembly is essentially calling the drawing method of the big 3 objects identified in the <a href="#Decomposition">hierarchical decomposition</a> section.
+			<code class="jush-js">Progetto.prototype.disegnaModello = function() {
+	var finalModel = [];
+
+	finalModel.push( this.fullWalls() );
+
+	if ( PROJECT_NOPLATFORM != true ) {
+		finalModel.push( this.creaPiattaforme() )
+	}
+
+	if (PROJECT_NOROOF != true) {
+		finalModel.push( this.fullRoof() );
+	}
+
+	return STRUCT(finalModel);
+};</code>
+		<h3>Centering the camera</h3>
+		The project, drawn as is, is quite big, so to show it immediately after rendering a modification of the P.O.V. is needed: it can be easily done by getting the bounding box of the rendered scene and then by placing the camera using a coordinate vector using the bounding box as scale factor.<br />This procedure is called on document ready, that happens just after the final rendering.
+<code class="jush-js">var centerProject = function() {
+	// p is the Plasm global viewer
+	var cameraControls = p.controls.controls;
+	var boundingRadius = p.scene.getBoundingRadius();
+
+	cameraControls.placeCamera(new THREE.Vector3(1.1*boundingRadius, -1.1*boundingRadius, 0.2*boundingRadius), 
+								new THREE.Vector3(), new THREE.Vector3(0,0,1));
+};
+// Center project on document ready
+$(function () {
+	centerProject();
+});</code>		
+		</p>
 		<div class="clearer"><span></span></div>
 		<div class="divider"></div>
 
 		<a name="Considerazioni"></a>
 		<h1>Conclusion</h1>
+		<p>
+		<a class="fancybox" href="img/comic_gap_docs.jpg"><img class="floatLeft resizeMilliH" src="img/comic_gap_docs.jpg" /></a>	
 
-		<p>Eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie.</p>
-		<p>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</p>
+		Doing the project was indeed fun and gave me the possibility to review old knowledge and learn new things about computational graphic. The usage of javascript and a web browser as development-tools made also easier working on every machine in an overall extremely stable environment. Writing documentation, as always, is a painful and very long, but at least made me review the whole project before delivery to check for mistakes.<br />
+       	I would like, also, to thank the teacher and the two assistants for the help received during the development of the project, it was really helpful.<br />
+       	Below there are some screenshots of the finished model and of the development phases.
+		</p>
+
+		<div class="clearer"><span></span></div>
+
+		<h2>Project screenshots</h2>
 
 		<h2>Author sketches and notes</h2>
 		<p>Below there is a collection of hand-written notes and sketches made during the various phases of the project.</p>
@@ -541,6 +733,8 @@ CurveUtils.createS0NUBS = function(degree, cPoints, debug) {
 		Thanks to <a href="https://github.com/" target="_blank">GitHub</a> for the repository and webpage hosting.
 		<br />
 		Thanks to <a href="http://xkcd.com/" target="_blank">xkcd</a> for the comic inside this page. 
+		<br />
+		Thanks to <a href="http://geekandpoke.typepad.com/geekandpoke/" target="_blank">geek&amp;poke</a> for the comic inside this page. 
 		<br />
 		This page is powered by <a href="http://jquery.com/" target="_blank">jQuery</a>, <a href="http://coffeescripter.com/code/ad-gallery/" target="_blank">jQuery.AD-Gallery</a>, <a href="http://fancybox.net/" target="_blank">Fancybox</a> and <a href="http://jush.sourceforge.net/" target="_blank">Jush</a>.
 	</div>
