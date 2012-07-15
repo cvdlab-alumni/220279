@@ -57,7 +57,11 @@
 			cycle: true,
 			init: function() {
 			    // preloadAll uses recursion to preload each image right after one another
-			    this.preloadAll();
+			    // this.preloadAll();
+			    // Or, just preload the first three
+      			this.preloadImage(0);
+      			this.preloadImage(1);
+      			this.preloadImage(2);
 			}
 		});
 
@@ -663,11 +667,82 @@ $(function () {
 		<div class="clearer"><span></span></div>
 
 		<h2>Project screenshots</h2>
+		<p>Some screenshots, made with low resolution <i class="plasm">domain</i>.</p>
+		<div id="gallery-plasm" class="ad-gallery">
+		  <div class="ad-image-wrapper">
+		  </div>
+		  <div class="ad-controls">
+		  </div>
+		  <div class="ad-nav">
+			  <div class="ad-thumbs">
+				  <ul class="ad-thumb-list">
+				  	<li>
+					  <a href="docimg/project/globale.png">
+						  <img src="docimg/project/thumbs/th_globale.png" alt="Global view" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/frontale.png">
+						  <img src="docimg/project/thumbs/th_frontale.png" alt="Frontal view" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/parete_laterale.png">
+						  <img src="docimg/project/thumbs/th_parete_laterale.png" alt="Side view" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/patio.png">
+						  <img src="docimg/project/thumbs/th_patio.png" alt="Patio" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/timpano_tetto.png">
+						  <img src="docimg/project/thumbs/th_timpano_tetto.png" alt="Pediment and roof" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/capitello_cornicione.png">
+						  <img src="docimg/project/thumbs/th_capitello_cornicione.png" alt="Column capital and architrave" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/base_colonna_ingresso.png">
+						  <img src="docimg/project/thumbs/th_base_colonna_ingresso.png" alt="Column base" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/dettaglio_balaustre.png">
+						  <img src="docimg/project/thumbs/th_dettaglio_balaustre.png" alt="Balauster details" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/dettaglio_timpano.png">
+						  <img src="docimg/project/thumbs/th_dettaglio_timpano.png" alt="Tympanum detail" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/dettaglio_cornicione.png">
+						  <img src="docimg/project/thumbs/th_dettaglio_cornicione.png" alt="Side cornice detail" />
+					  </a>
+				    </li>
+				  	<li>
+					  <a href="docimg/project/tetto_comignolo.png">
+						  <img src="docimg/project/thumbs/th_tetto_comignolo.png" alt="Roof and chimney" />
+					  </a>
+				    </li>
+				  </ul>
+			  </div>
+		  </div>
+		</div>
+		<!-- END Gallery sketches -->
+
+<div class="clearer"><span></span></div>
 
 		<h2>Author sketches and notes</h2>
 		<p>Below there is a collection of hand-written notes and sketches made during the various phases of the project.</p>
 		<!--Gallery sketches -->
-		<div id="gallery" class="ad-gallery">
+		<div id="gallery-notes" class="ad-gallery">
 		  <div class="ad-image-wrapper">
 		  </div>
 		  <div class="ad-controls">
@@ -743,12 +818,3 @@ $(function () {
 
 </body>
 </html>
-
-<!--
-		<code>margin-bottom: 12px;
-font: normal 1.1em "Lucida Sans Unicode",serif;
-background: url(img/quote.gif) no-repeat;
-padding-left: 28px;
-color: #555;</code>
-		<p>Eget feugiat est leo tempor quam. Ut quis neque convallis magna consequat molestie.</p>
-		 <cite>Sed sodales nisl sit amet augue. Donec ultrices, augue ullamcorper posuere laoreet, turpis massa tristique justo, sed egestas metus magna sed purus.</cite> -->	
