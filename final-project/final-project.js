@@ -8,6 +8,10 @@ var PROJECT_ONLYHALFWALL = false;
 var PROJECT_NOROOF = false;
 var PROJECT_NOGABLE = false;
 var PROJECT_NOPLATFORM = false;
+// override capital 3D
+var PROJECT_NEWCAPITAL_ROTATION = true;
+var PROJECT_NEWCAPITAL = false;
+// color connections with red
 var PROJECT_DEBUGWALLCONNECTION = false;
 // Don't use T/R/S in critical slow point but directly Model.x functions (decrease memory usage)
 var PROJECT_NOFUNCTIONALTRS = true;
@@ -34,14 +38,16 @@ if (PROJECT_HIGHRESOLUTION == false) {
 	}
 } else {
 	// Overrides 3D column settings
-	PROJECT_3DCOLUMN = true;
+	PROJECT_3DCOLUMN = !PROJECT_NEWCAPITAL;
 	// Domains
-	CommonDomains.DIM1_DOMAIN = INTERVALS(1)(60);
-	CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([60,1]);
+	CommonDomains.DIM1_DOMAIN = INTERVALS(1)(100);
+	CommonDomains.DIM2_DOMAIN = DOMAIN([[0,1],[0,1]])([100,1]);
 	CommonDomains.DIM2_DOMAIN_LOWRES = CommonDomains.DIM2_DOMAIN; // No lowres xD
 	CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([30,30]);
 	CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([1,60]);
-	CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([60,1,1]);
+	if ( PROJECT_3DCOLUMN == true ) {
+		CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([35,1,1]);
+	}
 }
 
 // =================================================================================
@@ -232,6 +238,9 @@ Colonna.prototype.curvaCapitello_Controls = function(raggioMax) {
 	
 	var i = 0;
 	var angolo = PI/2;
+	if ( PROJECT_NEWCAPITAL_ROTATION == true ) {
+		angolo = PI/3;
+	}
 
 	for (i = 0; i < 13; i++) {
 		controlPoints.push( [raggioMax * ( COS(i*angolo) + i*SIN(i*angolo)  ), raggioMax * ( SIN(i*angolo) - i*COS(i*angolo)  ), 0] );
@@ -390,7 +399,7 @@ Colonna.prototype.creaHalfCapitello = function() {
 	//
 	var zCapitello = -10;
 	var scalaSpiraleGrossa = 1.05;
-	var scalaSpiralePiccola = 0.9;
+	var scalaSpiralePiccola = 0.9-0.05;
 	var rilievoTappo = -1;
 	var lunMedianaCap = 10;
 
@@ -412,18 +421,68 @@ Colonna.prototype.creaHalfCapitello = function() {
 	var supPosteriore = CurveUtils.createBezier(S1, [curvaIntBack,curvaExtBack]);
 
 	var profonditaCapitelloSolido;
+	usaDominio3D = false;
 	if ( usaDominio3D == true ) {
 		profonditaCapitelloSolido = MAP( CurveUtils.createBezier(S2, [supAnteriore,supPosteriore]) )( CommonDomains.DIM3_DOMAIN );
 	 } else {
-		var profonditaCapitelloSolidoExt = CYLINDRICAL_SURFACE(curvaExt)([0,0,zCapitello]);
-		var profonditaCapitelloSolidoInt = CYLINDRICAL_SURFACE(curvaInt)([0,0,zCapitello]);
-		// Tappo a cylindrical surface
-		var chiusuraSpirali = this.creaCapitello_TappoSpiraliLowRes(zCapitello, scalaSpiraleGrossa, scalaSpiralePiccola);
-		// Genera il tutto
-		profonditaCapitelloSolido = STRUCT([ MAP( profonditaCapitelloSolidoExt )( CommonDomains.DIM2_DOMAIN ),
-											 MAP( profonditaCapitelloSolidoInt )( CommonDomains.DIM2_DOMAIN ),
-											 chiusuraSpirali
-										   ]);
+	 	if (PROJECT_NEWCAPITAL == true) {
+			var profonditaCapitelloSolidoExt = CYLINDRICAL_SURFACE(curvaExt)([0,0,rilievoTappo]);
+			var profonditaCapitelloSolidoInt = CYLINDRICAL_SURFACE(curvaInt)([0,0,rilievoTappo]);
+			var profonditaCapitelloSolidoExtB = CYLINDRICAL_SURFACE(curvaExtBack)([0,0,-rilievoTappo]);
+			var profonditaCapitelloSolidoIntB = CYLINDRICAL_SURFACE(curvaIntBack)([0,0,-rilievoTappo]);
+			//
+			var curvaExtFront_rilievo = this.curvaCapitello(1, scalaSpiraleGrossa, rilievoTappo, 2);
+			var curvaExtBack_rilievo = this.curvaCapitello(1, scalaSpiraleGrossa, zCapitello-rilievoTappo, 2);
+			var curvaIntCentrale_scale = 0.92;
+
+			var curvaIntFront_rilievo = this.curvaCapitello(1, scalaSpiralePiccola, rilievoTappo*5/3, 2);
+			var curvaIntBack_rilievo = this.curvaCapitello(1, scalaSpiralePiccola, zCapitello-(5/3*rilievoTappo), 2);
+			var curvaIntCentrale = this.curvaCapitello(1, scalaSpiralePiccola*curvaIntCentrale_scale, zCapitello/2, 2);
+			//
+			var bezierFB_cp = REPEAT(2)(curvaIntFront_rilievo);
+			bezierFB_cp[0] = curvaExtFront_rilievo; bezierFB_cp.push(curvaIntCentrale);
+			var bezierFB = CurveUtils.createBezier(S1, bezierFB_cp);
+			//
+			var bezierBF_cp = REPEAT(2)(curvaIntBack_rilievo);
+			bezierBF_cp[0] = curvaExtBack_rilievo; bezierBF_cp.push(curvaIntCentrale);			
+			var bezierBF = CurveUtils.createBezier(S1, bezierBF_cp);
+			// tappo Strano
+			var tappoTriangolareStrano = function(currObj, scaleInterno) {
+				var ptFront = currObj.curvaCapitello_NubsPoints(1, scalaSpiraleGrossa, rilievoTappo, 2);
+				var ptBack = currObj.curvaCapitello_NubsPoints(1, scalaSpiraleGrossa, zCapitello-rilievoTappo, 2);
+				var ptMiddle = currObj.curvaCapitello_NubsPoints(1, scalaSpiralePiccola*scaleInterno, zCapitello/2, 2);
+
+				return SIMPLICIAL_COMPLEX([ptFront[ptFront.length-1], ptBack[ptBack.length-1], ptMiddle[ptMiddle.length-1]])([[0,1,2]]);				
+			};
+
+
+			// Tappo a cylindrical surface
+			var chiusuraSpirali = this.creaCapitello_TappoSpiraliLowRes(zCapitello, scalaSpiraleGrossa, scalaSpiralePiccola);
+			// Genera il tutto
+			profonditaCapitelloSolido = STRUCT([ MAP( profonditaCapitelloSolidoExt )( CommonDomains.DIM2_DOMAIN ),
+												 MAP( profonditaCapitelloSolidoInt )( CommonDomains.DIM2_DOMAIN ),
+												 MAP( profonditaCapitelloSolidoExtB )( CommonDomains.DIM2_DOMAIN ),
+												 MAP( profonditaCapitelloSolidoIntB )( CommonDomains.DIM2_DOMAIN ),	
+												 //
+												 MAP( bezierFB )( CommonDomains.DIM2_DOMAIN ),	
+												 MAP( bezierBF )( CommonDomains.DIM2_DOMAIN ),
+												 // tappi
+												 tappoTriangolareStrano(this, curvaIntCentrale_scale),
+												 chiusuraSpirali
+											   ]);	 
+	 	} else {
+			var profonditaCapitelloSolidoExt = CYLINDRICAL_SURFACE(curvaExt)([0,0,zCapitello]);
+			var profonditaCapitelloSolidoInt = CYLINDRICAL_SURFACE(curvaInt)([0,0,zCapitello]);
+			// Tappo a cylindrical surface
+			var chiusuraSpirali = this.creaCapitello_TappoSpiraliLowRes(zCapitello, scalaSpiraleGrossa, scalaSpiralePiccola);
+			// Genera il tutto
+			profonditaCapitelloSolido = STRUCT([ MAP( profonditaCapitelloSolidoExt )( CommonDomains.DIM2_DOMAIN ),
+												 MAP( profonditaCapitelloSolidoInt )( CommonDomains.DIM2_DOMAIN ),
+												 chiusuraSpirali
+											   ]);	 		
+	 	}
+
+
 	}
 
 	// Fregio
@@ -484,6 +543,12 @@ Colonna.prototype.creaColonna = function() {
 	basicControlPoints.push([[3.6,1.6,0],[3,2.4,0],[0,0.6,0],[-0.6,0,0]]);
 	// La colonna
 	basicControlPoints.push([[3,2.4,0],[1.8,this.altezzaColonnaNoCap,0],[0,14,0],[-1,0,0]]);
+	
+	// Test
+	// basicControlPoints.push([[3,2.4,0],[1.8,this.altezzaColonnaNoCap-0.5,0],[0,14,0],[-1,0,0]]);
+	// basicControlPoints.push([[1.8,this.altezzaColonnaNoCap-0.5,0],[2.5,this.altezzaColonnaNoCap-0.2,0],[0,1,0],[-1,0,0]]);
+	// basicControlPoints.push([[2.5,this.altezzaColonnaNoCap-0.2,0],[1.8,this.altezzaColonnaNoCap,0],[0,-1,0],[1,0,0]]);
+
 	// Tappo superiore
 	basicControlPoints.push([[1.8,this.altezzaColonnaNoCap,0],[0,this.altezzaColonnaNoCap,0],[0,0,0],[0,0,0]]);
 
@@ -496,12 +561,13 @@ Colonna.prototype.creaColonna = function() {
 	
 
 	var modReturn = null;
+	var deltaZ = 0.1;
 
 	if (PROJECT_NOFUNCTIONALTRS == true) {
 		// Genera superfici senza clone()
 		var structSuperfici = STRUCT(colonnaSurfaces).translate([2], [this.baseColonnaSpessore]);
 		var baseQuadrata = CUBOID([this.baseColonna,this.baseColonna,this.baseColonnaSpessore]).translate([0,1],[-(this.baseColonna/2),-(this.baseColonna/2)]);
-		var capitelloTop = ((this.creaCapitello().scale([0,1,2], [this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])).rotate([1,2], PI/2)).translate([0,1,2], [-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello])
+		var capitelloTop = ((this.creaCapitello().scale([0,1,2], [this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])).rotate([1,2], PI/2)).translate([0,1,2], [-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello+deltaZ])
 		// Modello finale orientato sulle x
 		modReturn = STRUCT([
 						COLOR(ColoriProgetto.INTONACO_BASE)(structSuperfici),
@@ -512,7 +578,7 @@ Colonna.prototype.creaColonna = function() {
 		// Genera superfici
 		var structSuperfici = T([2])([this.baseColonnaSpessore])( STRUCT(colonnaSurfaces) );
 		var baseQuadrata = T([0,1])([-(this.baseColonna/2),-(this.baseColonna/2)])(CUBOID([this.baseColonna,this.baseColonna,this.baseColonnaSpessore]));
-		var capitelloTop = T([0,1,2])([-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello])( R([1,2])(PI/2)( S([0,1,2])([this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])(this.creaCapitello()) ) );
+		var capitelloTop = T([0,1,2])([-3.2,-2.3,this.altezzaColonnaNoCap+this.altezzaCapitello+deltaZ])( R([1,2])(PI/2)( S([0,1,2])([this.scalaCapitelloX,this.scalaCapitelloY,this.scalaCapitelloZ])(this.creaCapitello()) ) );
 		// Modello finale orientato sulle x
 		var rotazioneOrientante = R([0,1])(PI);
 		modReturn = rotazioneOrientante( STRUCT([
@@ -2322,6 +2388,7 @@ var runProject = function() {
 
 var scmodel = runProject();
 DRAW(scmodel);
+
 
 // Center project on document ready
 $(function () {
