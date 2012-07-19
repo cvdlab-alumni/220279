@@ -10,7 +10,7 @@ var PROJECT_NOGABLE = false;
 var PROJECT_NOPLATFORM = false;
 // override capital 3D
 var PROJECT_NEWCAPITAL_ROTATION = true;
-var PROJECT_NEWCAPITAL = false;
+var PROJECT_NEWCAPITAL = true;
 // color connections with red
 var PROJECT_DEBUGWALLCONNECTION = false;
 // Don't use T/R/S in critical slow point but directly Model.x functions (decrease memory usage)
@@ -26,6 +26,7 @@ CommonDomains.DIM2_DOMAIN_LOWRES = null;
 CommonDomains.DIM2RP_DOMAIN = null;
 CommonDomains.DIM2R_DOMAIN = null;
 CommonDomains.DIM3_DOMAIN = null;
+CommonDomains.DIM2RPP_DOMAIN = null;
 
 if (PROJECT_HIGHRESOLUTION == false) {
 	CommonDomains.DIM1_DOMAIN = INTERVALS(1)(35);
@@ -35,6 +36,10 @@ if (PROJECT_HIGHRESOLUTION == false) {
 	CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([1,20]);
 	if ( PROJECT_3DCOLUMN == true ) {
 		CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([35,1,1]);
+	}
+
+	if ( PROJECT_NEWCAPITAL == true ) {
+		CommonDomains.DIM2RPP_DOMAIN = DOMAIN([[0,1],[0,1]])([35,3]);	
 	}
 } else {
 	// Overrides 3D column settings
@@ -46,8 +51,11 @@ if (PROJECT_HIGHRESOLUTION == false) {
 	CommonDomains.DIM2RP_DOMAIN = DOMAIN([[0,1],[0,1]])([30,30]);
 	CommonDomains.DIM2R_DOMAIN = DOMAIN([[0,1],[0,2*PI]])([1,60]);
 	if ( PROJECT_3DCOLUMN == true ) {
-		CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([35,1,1]);
+		CommonDomains.DIM3_DOMAIN = DOMAIN([[0,1],[0,1],[0,1]])([100,1,1]);
 	}
+	if ( PROJECT_NEWCAPITAL == true ) {
+		CommonDomains.DIM2RPP_DOMAIN = DOMAIN([[0,1],[0,1]])([100,3]);	
+	}	
 }
 
 // =================================================================================
@@ -450,9 +458,14 @@ Colonna.prototype.creaHalfCapitello = function() {
 			var tappoTriangolareStrano = function(currObj, scaleInterno) {
 				var ptFront = currObj.curvaCapitello_NubsPoints(1, scalaSpiraleGrossa, rilievoTappo, 2);
 				var ptBack = currObj.curvaCapitello_NubsPoints(1, scalaSpiraleGrossa, zCapitello-rilievoTappo, 2);
-				var ptMiddle = currObj.curvaCapitello_NubsPoints(1, scalaSpiralePiccola*scaleInterno, zCapitello/2, 2);
+				var ptMiddle = currObj.curvaCapitello_NubsPoints(1, scalaSpiralePiccola*scaleInterno*0.5, zCapitello/2, 2);	
 
-				return SIMPLICIAL_COMPLEX([ptFront[ptFront.length-1], ptBack[ptBack.length-1], ptMiddle[ptMiddle.length-1]])([[0,1,2]]);				
+				var curvaChiusura = CurveUtils.createS0NUBS(2, [ptFront[ptFront.length-1], ptMiddle[ptMiddle.length-1], ptBack[ptBack.length-1]], false);
+				var curvaChiusura2 = CurveUtils.createS0NUBS(1, [ptFront[ptFront.length-1], ptFront[ptFront.length-1], ptBack[ptBack.length-1], ptBack[ptBack.length-1]], false);
+				var tappoChiusura = NUBS(S1)(1)([0,0,3,3])([curvaChiusura,curvaChiusura2]);
+				// var tappoChiusura = CONICAL_SURFACE(ptMiddle[ptMiddle.length-1])(curvaChiusura);
+				return MAP(tappoChiusura)(CommonDomains.DIM2_DOMAIN);
+				// return SIMPLICIAL_COMPLEX([ptFront[ptFront.length-1], ptBack[ptBack.length-1], ptMiddle[ptMiddle.length-1]])([[0,1,2]]);				
 			};
 
 
@@ -464,8 +477,8 @@ Colonna.prototype.creaHalfCapitello = function() {
 												 MAP( profonditaCapitelloSolidoExtB )( CommonDomains.DIM2_DOMAIN ),
 												 MAP( profonditaCapitelloSolidoIntB )( CommonDomains.DIM2_DOMAIN ),	
 												 //
-												 MAP( bezierFB )( CommonDomains.DIM2_DOMAIN ),	
-												 MAP( bezierBF )( CommonDomains.DIM2_DOMAIN ),
+												 MAP( bezierFB )( CommonDomains.DIM2RPP_DOMAIN ),	
+												 MAP( bezierBF )( CommonDomains.DIM2RPP_DOMAIN ),
 												 // tappi
 												 tappoTriangolareStrano(this, curvaIntCentrale_scale),
 												 chiusuraSpirali
@@ -2382,6 +2395,9 @@ var centerProject = function() {
 };
 
 var runProject = function() {
+	// var refColonna = new Colonna();
+	// return refColonna.creaColonna();
+	
 	var p = new Progetto();
 	return p.disegnaModello();
 };
